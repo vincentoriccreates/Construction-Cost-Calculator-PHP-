@@ -549,7 +549,84 @@ $js_assessment_levels = json_encode($assessment_levels);
   }
   .pct-input-wrap input:disabled + * { opacity: .4; }
 
-  /* ── Responsive tweaks ── */
+  /* ── Background Game Canvas ── */
+  #bgCanvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  #bgCanvas.interactive {
+    pointer-events: auto;
+    cursor: crosshair;
+  }
+
+  /* ── Game toggle button ── */
+  #gameToggle {
+    position: fixed;
+    bottom: 1.2rem;
+    right: 1.2rem;
+    z-index: 100;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: .5rem 1rem .5rem .75rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .78rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,.2);
+    transition: background .2s, transform .15s;
+    user-select: none;
+  }
+  #gameToggle:hover { background: var(--green-600); transform: translateY(-2px); }
+  #gameToggle .gt-icon { font-size: 1rem; }
+
+  /* ── Score HUD ── */
+  #gameHUD {
+    position: fixed;
+    bottom: 1.2rem;
+    left: 1.2rem;
+    z-index: 100;
+    background: rgba(26,35,50,.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(76,175,125,.3);
+    border-radius: 10px;
+    padding: .5rem .9rem;
+    font-family: 'DM Mono', monospace;
+    font-size: .78rem;
+    color: #fff;
+    display: none;
+    gap: 1.2rem;
+    align-items: center;
+  }
+  #gameHUD.visible { display: flex; }
+  #gameHUD .hud-item { display: flex; flex-direction: column; align-items: center; }
+  #gameHUD .hud-label { font-size: .6rem; opacity: .6; text-transform: uppercase; letter-spacing: .07em; }
+  #gameHUD .hud-val { font-size: 1rem; font-weight: 500; color: #4caf7d; }
+
+  /* ── Floating score popup ── */
+  .score-pop {
+    position: fixed;
+    font-family: 'DM Mono', monospace;
+    font-size: .9rem;
+    font-weight: 700;
+    color: #2e9e64;
+    pointer-events: none;
+    z-index: 99;
+    animation: scorePop .8s ease-out forwards;
+    text-shadow: 0 1px 4px rgba(0,0,0,.2);
+  }
+  @keyframes scorePop {
+    0%   { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-55px) scale(1.3); }
+  }
   @media (max-width: 768px) {
     .input-section .row > div { margin-bottom: .5rem; }
     .components-table-wrap { padding: 0 .8rem 1rem; }
@@ -558,6 +635,28 @@ $js_assessment_levels = json_encode($assessment_levels);
 </style>
 </head>
 <body>
+
+<!-- ── Background Game ── -->
+<canvas id="bgCanvas"></canvas>
+
+<div id="gameHUD">
+  <div class="hud-item">
+    <span class="hud-label">Demolished</span>
+    <span class="hud-val" id="hudScore">0</span>
+  </div>
+  <div class="hud-item">
+    <span class="hud-label">Combo</span>
+    <span class="hud-val" id="hudCombo">x1</span>
+  </div>
+  <div class="hud-item">
+    <span class="hud-label">Level</span>
+    <span class="hud-val" id="hudLevel">1</span>
+  </div>
+</div>
+
+<button id="gameToggle" onclick="toggleGame()">
+  <span class="gt-icon">🏗️</span> Play Background Game
+</button>
 
 <div class="page-wrapper">
 
@@ -995,9 +1094,303 @@ function copyFormula() {
   });
 }
 
-// ─────────────────────────────────────────────────────────────
-// Prevent negative on blur
-// ─────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════════
+// BACKGROUND MINI-GAME — Falling Bricks Demolition
+// Click bricks to demolish them and earn points!
+// ═══════════════════════════════════════════════════════════════
+(function() {
+  const canvas  = document.getElementById('bgCanvas');
+  const ctx     = canvas.getContext('2d');
+  let gameActive = false;
+  let animId    = null;
+  let score     = 0;
+  let combo     = 1;
+  let comboTimer = null;
+  let level     = 1;
+  let frameCount = 0;
+  let bricks    = [];
+  let particles = [];
+  let cranes    = [];
+
+  // Brick colours — construction themed
+  const BRICK_COLOURS = [
+    '#c0392b','#e74c3c','#e67e22','#d35400',
+    '#f39c12','#8e6b3e','#a0522d','#795548',
+    '#607d8b','#546e7a','#4caf7d','#2e7d52',
+  ];
+
+  const BRICK_W = 52, BRICK_H = 24;
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  // ── Brick object ──────────────────────────────────────────
+  function makeBrick() {
+    const col   = BRICK_COLOURS[Math.floor(Math.random() * BRICK_COLOURS.length)];
+    const speed = 0.6 + Math.random() * 0.8 + level * 0.12;
+    return {
+      x:      Math.random() * (canvas.width  - BRICK_W),
+      y:      -BRICK_H - Math.random() * 300,
+      w:      BRICK_W + Math.floor(Math.random() * 24),
+      h:      BRICK_H,
+      colour: col,
+      speed,
+      wobble: (Math.random() - 0.5) * 0.4,
+      hp:     1,
+      shake:  0,
+      opacity: 1,
+      dead:   false,
+    };
+  }
+
+  // ── Particle burst ────────────────────────────────────────
+  function burst(x, y, colour, count = 10) {
+    for (let i = 0; i < count; i++) {
+      const angle = (Math.PI * 2 / count) * i + Math.random() * 0.5;
+      const speed = 2 + Math.random() * 4;
+      particles.push({
+        x, y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 2,
+        r:  3 + Math.random() * 4,
+        colour,
+        life: 1,
+        decay: 0.02 + Math.random() * 0.03,
+      });
+    }
+  }
+
+  // ── Crane (decorative, slowly moves) ─────────────────────
+  function makeCrane(x) {
+    return { x, y: 0, speed: 0.15 + Math.random() * 0.1, dir: 1 };
+  }
+
+  // ── Draw a single brick ───────────────────────────────────
+  function drawBrick(b) {
+    ctx.save();
+    ctx.globalAlpha = b.opacity;
+    const sx = b.shake ? (Math.random() - 0.5) * b.shake : 0;
+
+    // Shadow
+    ctx.shadowColor = 'rgba(0,0,0,0.18)';
+    ctx.shadowBlur  = 6;
+    ctx.shadowOffsetX = 2; ctx.shadowOffsetY = 3;
+
+    // Body
+    ctx.fillStyle = b.colour;
+    ctx.beginPath();
+    ctx.roundRect(b.x + sx, b.y, b.w, b.h, 3);
+    ctx.fill();
+
+    // Mortar lines (texture)
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(b.x + sx + b.w / 2, b.y);
+    ctx.lineTo(b.x + sx + b.w / 2, b.y + b.h);
+    ctx.stroke();
+
+    // Highlight
+    ctx.fillStyle = 'rgba(255,255,255,0.12)';
+    ctx.beginPath();
+    ctx.roundRect(b.x + sx + 2, b.y + 2, b.w - 4, b.h / 2 - 2, 2);
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  // ── Draw a crane ──────────────────────────────────────────
+  function drawCrane(c) {
+    const x = c.x, h = canvas.height * 0.35;
+    ctx.save();
+    ctx.globalAlpha = 0.07;
+    ctx.strokeStyle = '#1a2332';
+    ctx.lineWidth = 3;
+    // Mast
+    ctx.beginPath();
+    ctx.moveTo(x, canvas.height);
+    ctx.lineTo(x, canvas.height - h);
+    ctx.stroke();
+    // Jib (horizontal arm)
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x - 20, canvas.height - h);
+    ctx.lineTo(x + 120, canvas.height - h);
+    ctx.stroke();
+    // Cable
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x + 90, canvas.height - h);
+    ctx.lineTo(x + 90, canvas.height - h + 60);
+    ctx.stroke();
+    // Hook ball
+    ctx.beginPath();
+    ctx.arc(x + 90, canvas.height - h + 65, 5, 0, Math.PI * 2);
+    ctx.fillStyle = '#1a2332';
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // ── Score popup ───────────────────────────────────────────
+  function showScorePop(x, y, text) {
+    const el = document.createElement('div');
+    el.className = 'score-pop';
+    el.textContent = text;
+    el.style.left = x + 'px';
+    el.style.top  = y + 'px';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 850);
+  }
+
+  // ── Hit detection ─────────────────────────────────────────
+  function hitBrick(mx, my) {
+    for (let i = bricks.length - 1; i >= 0; i--) {
+      const b = bricks[i];
+      if (b.dead) continue;
+      if (mx >= b.x && mx <= b.x + b.w && my >= b.y && my <= b.y + b.h) {
+        b.dead   = true;
+        b.shake  = 0;
+        score   += combo;
+        // Combo
+        clearTimeout(comboTimer);
+        combo++;
+        comboTimer = setTimeout(() => { combo = 1; updateHUD(); }, 1200);
+
+        burst(b.x + b.w / 2, b.y + b.h / 2, b.colour, 12 + combo);
+        showScorePop(
+          Math.min(mx, window.innerWidth - 80),
+          my - 10,
+          combo > 1 ? `+${combo} COMBO!` : `+1`
+        );
+        updateHUD();
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function updateHUD() {
+    document.getElementById('hudScore').textContent = score;
+    document.getElementById('hudCombo').textContent = 'x' + combo;
+    level = 1 + Math.floor(score / 20);
+    document.getElementById('hudLevel').textContent = level;
+  }
+
+  // ── Main game loop ────────────────────────────────────────
+  function loop() {
+    if (!gameActive) return;
+    animId = requestAnimationFrame(loop);
+    frameCount++;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Spawn bricks
+    const spawnRate = Math.max(55 - level * 3, 18);
+    if (frameCount % spawnRate === 0) {
+      bricks.push(makeBrick());
+    }
+
+    // Update & draw cranes
+    cranes.forEach(c => {
+      c.x += c.speed * c.dir;
+      if (c.x > canvas.width + 150 || c.x < -150) c.dir *= -1;
+      drawCrane(c);
+    });
+
+    // Update & draw bricks
+    bricks = bricks.filter(b => {
+      if (b.dead) {
+        b.opacity -= 0.06;
+        b.y       -= 1.5;
+        return b.opacity > 0;
+      }
+      b.y    += b.speed;
+      b.x    += b.wobble;
+      if (b.shake > 0) b.shake -= 0.3;
+      // Bounce off walls
+      if (b.x < 0)                    { b.x = 0; b.wobble *= -1; }
+      if (b.x + b.w > canvas.width)  { b.x = canvas.width - b.w; b.wobble *= -1; }
+      drawBrick(b);
+      return b.y < canvas.height + BRICK_H;
+    });
+
+    // Update & draw particles
+    particles = particles.filter(p => {
+      p.x    += p.vx;
+      p.y    += p.vy;
+      p.vy   += 0.18; // gravity
+      p.life -= p.decay;
+      if (p.life <= 0) return false;
+      ctx.save();
+      ctx.globalAlpha = p.life;
+      ctx.fillStyle   = p.colour;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      return true;
+    });
+  }
+
+  // ── Toggle game ───────────────────────────────────────────
+  window.toggleGame = function() {
+    gameActive = !gameActive;
+    const btn = document.getElementById('gameToggle');
+    const hud = document.getElementById('gameHUD');
+
+    if (gameActive) {
+      resize();
+      if (!cranes.length) {
+        cranes = [
+          makeCrane(canvas.width * 0.15),
+          makeCrane(canvas.width * 0.75),
+        ];
+      }
+      canvas.classList.add('interactive');
+      hud.classList.add('visible');
+      btn.innerHTML = '<span class="gt-icon">⛔</span> Stop Game';
+      btn.style.background = '#c0392b';
+      loop();
+    } else {
+      canvas.classList.remove('interactive');
+      hud.classList.remove('visible');
+      btn.innerHTML = '<span class="gt-icon">🏗️</span> Play Background Game';
+      btn.style.background = '';
+      cancelAnimationFrame(animId);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      bricks = []; particles = [];
+    }
+  };
+
+  // ── Click handler ─────────────────────────────────────────
+  canvas.addEventListener('click', e => {
+    if (!gameActive) return;
+    const rect = canvas.getBoundingClientRect();
+    hitBrick(e.clientX - rect.left, e.clientY - rect.top);
+  });
+
+  // ── Touch support ─────────────────────────────────────────
+  canvas.addEventListener('touchstart', e => {
+    if (!gameActive) return;
+    e.preventDefault();
+    const rect  = canvas.getBoundingClientRect();
+    const touch = e.touches[0];
+    hitBrick(touch.clientX - rect.left, touch.clientY - rect.top);
+  }, { passive: false });
+
+  window.addEventListener('resize', () => {
+    resize();
+    cranes = [
+      makeCrane(canvas.width * 0.15),
+      makeCrane(canvas.width * 0.75),
+    ];
+  });
+
+  resize();
+})();
 document.querySelectorAll('input[type=number]').forEach(el => {
   el.addEventListener('blur', () => {
     if (parseFloat(el.value) < 0) { el.value = 0; compute(); }
