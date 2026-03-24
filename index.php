@@ -73,7 +73,7 @@ $unit_costs = [
     // Group 13
     'I (13)'   => 0,      'II (13)'  => 0,      'III-A (13)'=> 0,     'III-B (13)'=> 0,
     'III-C (13)'=> 0,     'III-D (13)'=> 0,     'IV-A (13)' => 0,     'IV-B (13)' => 0,
-    'IV-C (13)' => 0,     'V-A (13)' => 0,      'V-B (13)' => 7570,   'V-C (13)' => 6890,
+    'IV-C (13)' => 0,     'V-A (13)' => 7570,      'V-B (13)' => 6890,   'V-C (13)' => 0,
 ];
 
 $components = [
@@ -112,12 +112,41 @@ $assessment_levels = [
     'Government' => [[0, 10000000, 0.15]],
 ];
 
+$additional_items = [
+    'Pavement (Tennis Court)'               => 100.00,
+    'Pavement (Concrete 10 cm. thick)'      => 60.00,
+    'Pavement (Concrete 15 cm. thick)'      => 65.00,
+    'Pavement (Concrete 20 cm. thick)'      => 100.00,
+    'Pavement (Asphalt 1 course)'           => 50.00,
+    'Pavement (Asphalt 2 course)'           => 75.00,
+    'Pavement (Asphalt 3 course)'           => 100.00,
+    'Floor Finishes - Marble Slabs'         => 320.00,
+    'Floor Finishes - Marble Tiles'         => 150.00,
+    'Floor Finishes - Cracy Cut Marbles'    => 100.00,
+    'Floor Finishes - Granalithic'          => 60.00,
+    'Floor Finishes - Narra'                => 60.00,
+    'Floor Finishes - Yakal'                => 80.00,
+    'Floor Finishes - Narra/Fancy'          => 60.00,
+    'Floor Finishes - Wood Tiles'           => 260.00,
+    'Floor Finishes - Ordinary Wood Tiles'  => 200.00,
+    'Floor Finishes - Vinyl Tiles'          => 150.00,
+    'Floor Finishes - Wahout Feebles'       => 90.00,
+    'Floor Finishes - Unglased Tiles'       => 120.00,
+    'Walling - Double Walling (Ordinary Plywood)' => 300.00,
+    'Walling - Double Walling (Narra Panelling)'  => 400.00,
+    'Walling - Galzed White Tiles'          => 400.00,
+    'Walling - Galzed Color Tiles'          => 450.00,
+    'Walling - Fancy Tiles'                 => 450.00,
+    'Walling - Synthetic Rubble'            => 400.00,
+    'Walling - Bricks'                      => 400.00,
+];
+
 // Pass PHP data to JavaScript
-$js_unit_costs       = json_encode($unit_costs);
-$js_components       = json_encode($components);
+$js_unit_costs        = json_encode($unit_costs);
+$js_components        = json_encode($components);
 $js_assessment_levels = json_encode($assessment_levels);
-?>
-<!DOCTYPE html>
+$js_additional_items  = json_encode($additional_items);
+?><!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -549,6 +578,48 @@ $js_assessment_levels = json_encode($assessment_levels);
   }
   .pct-input-wrap input:disabled + * { opacity: .4; }
 
+  /* ── Additional Items Section ── */
+  .addl-section {
+    padding: 0 1.6rem 1.4rem;
+  }
+  .addl-table thead th {
+    background: #3d5a80;
+  }
+  .addl-computed-cost {
+    font-family: 'DM Mono', monospace;
+    font-size: .9rem;
+    font-weight: 500;
+    color: var(--ink);
+    text-align: right;
+    white-space: nowrap;
+    min-width: 130px;
+  }
+  .unit-cost-badge {
+    display: inline-block;
+    background: #e8f4fd;
+    color: #1a5276;
+    border: 1px solid #aed6f1;
+    border-radius: 5px;
+    padding: .15rem .5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: .78rem;
+    font-weight: 500;
+    min-width: 70px;
+    text-align: center;
+  }
+  .unit-cost-badge.empty {
+    background: #f1f5f9;
+    color: #aaa;
+    border-color: #e2e8f0;
+  }
+  /* Summary total additional cost row */
+  .summary-item.addl-highlight {
+    background: rgba(61,90,128,.15);
+    border-color: rgba(61,90,128,.3);
+  }
+  .summary-item.addl-highlight .s-label { color: rgba(255,255,255,.6); }
+  .summary-item.addl-highlight .s-value { color: #aed6f1; }
+
   /* ── Background Game Canvas ── */
   #bgCanvas {
     position: fixed;
@@ -805,6 +876,68 @@ $js_assessment_levels = json_encode($assessment_levels);
       </div>
     </div>
 
+    <!-- ②-B Additional Items -->
+    <div class="section-header">
+      <span class="dot" style="background:#3d5a80"></span>
+      <span style="color:#3d5a80;">Cost of Additional Items</span>
+    </div>
+
+    <div class="addl-section mt-3">
+      <div class="table-responsive">
+        <table class="table addl-table" id="additionalTable">
+          <thead>
+            <tr>
+              <th style="width:36px">#</th>
+              <th>Item</th>
+              <th style="width:115px">Unit Cost</th>
+              <th style="width:150px">Area (sqm)</th>
+              <th style="width:160px;text-align:right">Computed Cost</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php for ($i = 1; $i <= 5; $i++): ?>
+            <tr id="addl_row_<?= $i ?>">
+              <td><div class="row-num" style="background:#e8f0fe;color:#3d5a80"><?= $i ?></div></td>
+              <td>
+                <select class="form-select addl-select" data-row="<?= $i ?>" onchange="onAddlChange(<?= $i ?>)">
+                  <option value="">-- Select Item --</option>
+                  <?php
+                  $prev_cat = '';
+                  foreach ($additional_items as $iname => $iunit):
+                    // Group by category prefix
+                    $cat = strstr($iname, ' -', true) ?: strstr($iname, ' (', true) ?: $iname;
+                    if ($cat !== $prev_cat):
+                      if ($prev_cat !== '') echo '</optgroup>';
+                      echo '<optgroup label="' . htmlspecialchars($cat) . '">';
+                      $prev_cat = $cat;
+                    endif;
+                  ?>
+                    <option value="<?= htmlspecialchars($iname) ?>" data-unit="<?= $iunit ?>">
+                      <?= htmlspecialchars($iname) ?>
+                    </option>
+                  <?php endforeach; ?>
+                  </optgroup>
+                </select>
+              </td>
+              <td>
+                <span class="unit-cost-badge empty" id="addl_unit_<?= $i ?>">—</span>
+              </td>
+              <td>
+                <input type="number" class="form-control addl-area"
+                       id="addl_area_<?= $i ?>" data-row="<?= $i ?>"
+                       value="" min="0" step="0.01"
+                       oninput="computeAddl()" placeholder="0.00" disabled>
+              </td>
+              <td>
+                <div class="addl-computed-cost" id="addl_cost_<?= $i ?>">₱0.00</div>
+              </td>
+            </tr>
+            <?php endfor; ?>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
     <!-- ③ Summary -->
     <div class="summary-section">
       <div class="summary-grid">
@@ -816,8 +949,12 @@ $js_assessment_levels = json_encode($assessment_levels);
           <div class="s-label">Total Component Area</div>
           <div class="s-value" id="totalCompArea">0.00 <small style="font-size:.7em;opacity:.6">sqm</small></div>
         </div>
-        <div class="summary-item highlight">
-          <div class="s-label">Total Construction Cost</div>
+        <div class="summary-item addl-highlight">
+          <div class="s-label">Additional Items Cost</div>
+          <div class="s-value" id="totalAddlCost">₱0.00</div>
+        </div>
+        <div class="summary-item highlight" style="grid-column:1/-1">
+          <div class="s-label">Total Construction Cost <small style="opacity:.7;font-size:.7em">(Building + Additional Items)</small></div>
           <div class="s-value" id="totalCost">₱0.00</div>
         </div>
       </div>
@@ -894,6 +1031,7 @@ $js_assessment_levels = json_encode($assessment_levels);
 const UNIT_COSTS        = <?= $js_unit_costs ?>;
 const COMPONENT_PCTS    = <?= $js_components ?>;
 const ASSESSMENT_LEVELS = <?= $js_assessment_levels ?>;
+const ADDITIONAL_ITEMS  = <?= $js_additional_items ?>;
 
 // ─────────────────────────────────────────────────────────────
 // Helpers
@@ -958,6 +1096,32 @@ function onComponentChange(rowNum) {
 }
 
 // ─────────────────────────────────────────────────────────────
+// Additional Items handlers
+// ─────────────────────────────────────────────────────────────
+function onAddlChange(rowNum) {
+  const sel      = document.querySelector(`.addl-select[data-row="${rowNum}"]`);
+  const unitBadge = document.getElementById(`addl_unit_${rowNum}`);
+  const areaEl   = document.getElementById(`addl_area_${rowNum}`);
+  const costEl   = document.getElementById(`addl_cost_${rowNum}`);
+
+  if (sel.value === '') {
+    unitBadge.textContent = '—';
+    unitBadge.className   = 'unit-cost-badge empty';
+    areaEl.disabled = true;
+    areaEl.value    = '';
+    costEl.textContent = '₱0.00';
+  } else {
+    const unit = ADDITIONAL_ITEMS[sel.value] || 0;
+    unitBadge.textContent = '₱' + unit.toLocaleString('en-PH', {minimumFractionDigits:2});
+    unitBadge.className   = 'unit-cost-badge';
+    areaEl.disabled = false;
+  }
+  compute();
+}
+
+function computeAddl() { compute(); }
+
+// ─────────────────────────────────────────────────────────────
 // Main computation
 // ─────────────────────────────────────────────────────────────
 function compute() {
@@ -984,7 +1148,26 @@ function compute() {
   }
 
   const totalCost  = mainCost + compCostTotal;
-  const marketVal  = Math.floor(totalCost / 10) * 10;
+
+  // ── Additional Items ──
+  let addlCostTotal = 0;
+  let addlLines     = [];
+  for (let i = 1; i <= 5; i++) {
+    const sel  = document.querySelector(`.addl-select[data-row="${i}"]`);
+    const area = Math.max(0, parseFloat(document.getElementById(`addl_area_${i}`).value) || 0);
+    if (!sel || sel.value === '' || area === 0) {
+      document.getElementById(`addl_cost_${i}`).textContent = '₱0.00';
+      continue;
+    }
+    const unit = ADDITIONAL_ITEMS[sel.value] || 0;
+    const cost = area * unit;
+    addlCostTotal += cost;
+    document.getElementById(`addl_cost_${i}`).textContent = peso(cost);
+    addlLines.push({ name: sel.value, area, unit, cost });
+  }
+
+  const grandTotal = totalCost + addlCostTotal;
+  const marketVal  = Math.floor(grandTotal / 10) * 10;
   const assessRate = getAssessmentLevel(structType, marketVal);
   const assessedV  = Math.floor(marketVal * assessRate / 10) * 10;
   const taxable    = assessedV * 0.02;
@@ -995,7 +1178,8 @@ function compute() {
     `${num2(mainArea)} <small style="font-size:.7em;opacity:.6">sqm</small>`;
   document.getElementById('totalCompArea').innerHTML =
     `${num2(compAreaTotal)} <small style="font-size:.7em;opacity:.6">sqm</small>`;
-  document.getElementById('totalCost').textContent = peso(totalCost);
+  document.getElementById('totalAddlCost').textContent = peso(addlCostTotal);
+  document.getElementById('totalCost').textContent     = peso(grandTotal);
 
   // Assessment
   document.getElementById('marketValue').textContent   = peso(marketVal);
@@ -1048,6 +1232,19 @@ function compute() {
 
   lines.push('');
   lines.push(`Cons. Cost:    ${fmtN(totalCost)}`);
+
+  // Additional items in formula
+  if (addlLines.length > 0) {
+    lines.push('');
+    lines.push('--- Additional Items ---');
+    addlLines.forEach(a => {
+      lines.push(`${a.name}: ${fmtN(a.area)} x ${fmtN(a.unit)} = ${fmtN(a.cost)}`);
+    });
+    lines.push(`Add. Items Total: ${fmtN(addlCostTotal)}`);
+    lines.push('');
+    lines.push(`Grand Total:   ${fmtN(grandTotal)}`);
+  }
+
   lines.push(`Market Value:  ${fmtN(marketVal)}`);
   lines.push(`Assess Level:  ${(assessRate * 100).toFixed(2)}%`);
   lines.push('');
