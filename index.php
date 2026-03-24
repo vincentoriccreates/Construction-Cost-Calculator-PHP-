@@ -73,7 +73,7 @@ $unit_costs = [
     // Group 13
     'I (13)'   => 0,      'II (13)'  => 0,      'III-A (13)'=> 0,     'III-B (13)'=> 0,
     'III-C (13)'=> 0,     'III-D (13)'=> 0,     'IV-A (13)' => 0,     'IV-B (13)' => 0,
-    'IV-C (13)' => 0,     'V-A (13)' => 7570,      'V-B (13)' => 6890,   'V-C (13)' => 0,
+    'IV-C (13)' => 0,     'V-A (13)' => 0,      'V-B (13)' => 7570,   'V-C (13)' => 6890,
 ];
 
 $components = [
@@ -578,6 +578,64 @@ $js_additional_items  = json_encode($additional_items);
   }
   .pct-input-wrap input:disabled + * { opacity: .4; }
 
+  /* ── Add / Remove Row controls ── */
+  .add-row-bar {
+    padding: .6rem 0 .2rem;
+    display: flex;
+    align-items: center;
+  }
+  .add-row-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: transparent;
+    border: 1.5px dashed var(--green-400);
+    color: var(--green-600);
+    border-radius: 8px;
+    padding: .42rem 1rem;
+    font-size: .8rem;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: background .15s, border-color .15s, transform .1s;
+  }
+  .add-row-btn:hover {
+    background: var(--green-50);
+    border-color: var(--green-500);
+    transform: translateY(-1px);
+  }
+  .add-row-btn:active { transform: scale(.97); }
+
+  .add-row-btn-blue {
+    border-color: #7aa3d4;
+    color: #3d5a80;
+  }
+  .add-row-btn-blue:hover {
+    background: #e8f0fe;
+    border-color: #3d5a80;
+  }
+
+  .remove-row-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #ccc;
+    padding: .2rem .3rem;
+    border-radius: 5px;
+    transition: color .15s, background .15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .remove-row-btn:hover { color: #e74c3c; background: #fff0f0; }
+
+  /* row enter animation */
+  @keyframes rowSlideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .row-new { animation: rowSlideIn .22s ease-out; }
+
   /* ── Additional Items Section ── */
   .addl-section {
     padding: 0 1.6rem 1.4rem;
@@ -783,9 +841,7 @@ $js_additional_items  = json_encode($additional_items);
                 $prev_group = $suffix;
                 $group_num++;
               endif;
-              $cost_label = $uc > 0
-                ? htmlspecialchars($ct) . ' — ₱' . number_format($uc, 2)
-                : htmlspecialchars($ct) . ' — N/A';
+              $cost_label = htmlspecialchars($ct);
               $disabled = $uc == 0 ? ' disabled style="color:#aaa;"' : '';
             ?>
               <option value="<?= htmlspecialchars($ct) ?>"<?= $disabled ?>><?= $cost_label ?></option>
@@ -837,41 +893,19 @@ $js_additional_items  = json_encode($additional_items);
                 <th style="width:150px">Area (sqm)</th>
                 <th style="width:110px">Percentage</th>
                 <th style="width:160px;text-align:right">Computed Cost</th>
+                <th style="width:36px"></th>
               </tr>
             </thead>
-            <tbody>
-              <?php for ($i = 1; $i <= 5; $i++): ?>
-              <tr id="row_<?= $i ?>">
-                <td><div class="row-num"><?= $i ?></div></td>
-                <td>
-                  <select class="form-select comp-select" data-row="<?= $i ?>" onchange="onComponentChange(<?= $i ?>)">
-                    <option value="" data-pct="">-- Select Component --</option>
-                    <?php foreach ($components as $cname => $cpct): ?>
-                      <option value="<?= htmlspecialchars($cname) ?>" data-pct="<?= $cpct ?>">
-                        <?= htmlspecialchars($cname) ?>
-                      </option>
-                    <?php endforeach; ?>
-                  </select>
-                </td>
-                <td>
-                  <input type="number" class="form-control area-input"
-                         id="area_<?= $i ?>" data-row="<?= $i ?>"
-                         value="" min="0" step="0.01" oninput="compute()" placeholder="0.00">
-                </td>
-                <td>
-                  <div class="pct-input-wrap">
-                    <input type="number" class="form-control pct-input"
-                           id="pct_<?= $i ?>" data-row="<?= $i ?>"
-                           value="" min="0" max="100" step="1" oninput="compute()" placeholder="—">
-                  </div>
-                </td>
-                <td>
-                  <div class="computed-cost" id="cost_<?= $i ?>">₱0.00</div>
-                </td>
-              </tr>
-              <?php endfor; ?>
+            <tbody id="compTbody">
+              <!-- rows injected by JS -->
             </tbody>
           </table>
+        </div>
+        <div class="add-row-bar">
+          <button class="add-row-btn" onclick="addCompRow()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            Add Building Component Row
+          </button>
         </div>
       </div>
     </div>
@@ -892,49 +926,19 @@ $js_additional_items  = json_encode($additional_items);
               <th style="width:115px">Unit Cost</th>
               <th style="width:150px">Area (sqm)</th>
               <th style="width:160px;text-align:right">Computed Cost</th>
+              <th style="width:36px"></th>
             </tr>
           </thead>
-          <tbody>
-            <?php for ($i = 1; $i <= 5; $i++): ?>
-            <tr id="addl_row_<?= $i ?>">
-              <td><div class="row-num" style="background:#e8f0fe;color:#3d5a80"><?= $i ?></div></td>
-              <td>
-                <select class="form-select addl-select" data-row="<?= $i ?>" onchange="onAddlChange(<?= $i ?>)">
-                  <option value="">-- Select Item --</option>
-                  <?php
-                  $prev_cat = '';
-                  foreach ($additional_items as $iname => $iunit):
-                    // Group by category prefix
-                    $cat = strstr($iname, ' -', true) ?: strstr($iname, ' (', true) ?: $iname;
-                    if ($cat !== $prev_cat):
-                      if ($prev_cat !== '') echo '</optgroup>';
-                      echo '<optgroup label="' . htmlspecialchars($cat) . '">';
-                      $prev_cat = $cat;
-                    endif;
-                  ?>
-                    <option value="<?= htmlspecialchars($iname) ?>" data-unit="<?= $iunit ?>">
-                      <?= htmlspecialchars($iname) ?>
-                    </option>
-                  <?php endforeach; ?>
-                  </optgroup>
-                </select>
-              </td>
-              <td>
-                <span class="unit-cost-badge empty" id="addl_unit_<?= $i ?>">—</span>
-              </td>
-              <td>
-                <input type="number" class="form-control addl-area"
-                       id="addl_area_<?= $i ?>" data-row="<?= $i ?>"
-                       value="" min="0" step="0.01"
-                       oninput="computeAddl()" placeholder="0.00" disabled>
-              </td>
-              <td>
-                <div class="addl-computed-cost" id="addl_cost_<?= $i ?>">₱0.00</div>
-              </td>
-            </tr>
-            <?php endfor; ?>
+          <tbody id="addlTbody">
+            <!-- rows injected by JS -->
           </tbody>
         </table>
+      </div>
+      <div class="add-row-bar">
+        <button class="add-row-btn add-row-btn-blue" onclick="addAddlRow()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          Add Additional Item Row
+        </button>
       </div>
     </div>
 
@@ -1070,6 +1074,153 @@ function onConstructionChange() {
 }
 
 // ─────────────────────────────────────────────────────────────
+// Dynamic row counters
+// ─────────────────────────────────────────────────────────────
+let compRowCount = 0;
+let addlRowCount = 0;
+
+// ─────────────────────────────────────────────────────────────
+// Build component options HTML (shared)
+// ─────────────────────────────────────────────────────────────
+function buildCompOptions() {
+  let html = '<option value="">-- Select Component --</option>';
+  for (const [name, pct] of Object.entries(COMPONENT_PCTS)) {
+    html += `<option value="${name}" data-pct="${pct}">${name}</option>`;
+  }
+  return html;
+}
+
+// ─────────────────────────────────────────────────────────────
+// Build additional item options HTML (shared, grouped)
+// ─────────────────────────────────────────────────────────────
+function buildAddlOptions() {
+  const groups = {};
+  for (const [name, unit] of Object.entries(ADDITIONAL_ITEMS)) {
+    const cat = name.includes(' - ') ? name.split(' - ')[0]
+              : name.includes(' (') ? name.split(' (')[0]
+              : name;
+    if (!groups[cat]) groups[cat] = [];
+    groups[cat].push({ name, unit });
+  }
+  let html = '<option value="">-- Select Item --</option>';
+  for (const [cat, items] of Object.entries(groups)) {
+    html += `<optgroup label="${cat}">`;
+    items.forEach(it => {
+      html += `<option value="${it.name}" data-unit="${it.unit}">${it.name}</option>`;
+    });
+    html += '</optgroup>';
+  }
+  return html;
+}
+
+// ─────────────────────────────────────────────────────────────
+// Add / Remove — Building Components
+// ─────────────────────────────────────────────────────────────
+function addCompRow() {
+  compRowCount++;
+  const n    = compRowCount;
+  const tbody = document.getElementById('compTbody');
+  const tr   = document.createElement('tr');
+  tr.id        = `comp_tr_${n}`;
+  tr.className = 'row-new';
+  tr.innerHTML = `
+    <td><div class="row-num">${tbody.rows.length + 1}</div></td>
+    <td>
+      <select class="form-select comp-select" data-row="${n}" onchange="onComponentChange(${n})">
+        ${buildCompOptions()}
+      </select>
+    </td>
+    <td>
+      <input type="number" class="form-control area-input"
+             id="area_${n}" data-row="${n}"
+             value="" min="0" step="0.01" oninput="compute()" placeholder="0.00" disabled>
+    </td>
+    <td>
+      <div class="pct-input-wrap">
+        <input type="number" class="form-control pct-input"
+               id="pct_${n}" data-row="${n}"
+               value="" min="0" max="100" step="1" oninput="compute()" placeholder="—" disabled>
+      </div>
+    </td>
+    <td><div class="computed-cost" id="cost_${n}">₱0.00</div></td>
+    <td>
+      <button class="remove-row-btn" onclick="removeCompRow('comp_tr_${n}')" title="Remove row">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+        </svg>
+      </button>
+    </td>`;
+  tbody.appendChild(tr);
+  renumberRows('compTbody');
+  compute();
+}
+
+function removeCompRow(trId) {
+  const tr = document.getElementById(trId);
+  if (tr) {
+    tr.style.transition = 'opacity .18s';
+    tr.style.opacity    = '0';
+    setTimeout(() => { tr.remove(); renumberRows('compTbody'); compute(); }, 180);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// Add / Remove — Additional Items
+// ─────────────────────────────────────────────────────────────
+function addAddlRow() {
+  addlRowCount++;
+  const n    = addlRowCount;
+  const tbody = document.getElementById('addlTbody');
+  const tr   = document.createElement('tr');
+  tr.id        = `addl_tr_${n}`;
+  tr.className = 'row-new';
+  tr.innerHTML = `
+    <td><div class="row-num" style="background:#e8f0fe;color:#3d5a80">${tbody.rows.length + 1}</div></td>
+    <td>
+      <select class="form-select addl-select" data-row="${n}" onchange="onAddlChange(${n})">
+        ${buildAddlOptions()}
+      </select>
+    </td>
+    <td><span class="unit-cost-badge empty" id="addl_unit_${n}">—</span></td>
+    <td>
+      <input type="number" class="form-control addl-area"
+             id="addl_area_${n}" data-row="${n}"
+             value="" min="0" step="0.01" oninput="compute()" placeholder="0.00" disabled>
+    </td>
+    <td><div class="addl-computed-cost" id="addl_cost_${n}">₱0.00</div></td>
+    <td>
+      <button class="remove-row-btn" onclick="removeAddlRow('addl_tr_${n}')" title="Remove row">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+        </svg>
+      </button>
+    </td>`;
+  tbody.appendChild(tr);
+  renumberRows('addlTbody');
+  compute();
+}
+
+function removeAddlRow(trId) {
+  const tr = document.getElementById(trId);
+  if (tr) {
+    tr.style.transition = 'opacity .18s';
+    tr.style.opacity    = '0';
+    setTimeout(() => { tr.remove(); renumberRows('addlTbody'); compute(); }, 180);
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// Re-number row badges after add / remove
+// ─────────────────────────────────────────────────────────────
+function renumberRows(tbodyId) {
+  const rows = document.getElementById(tbodyId).rows;
+  Array.from(rows).forEach((tr, idx) => {
+    const badge = tr.querySelector('.row-num');
+    if (badge) badge.textContent = idx + 1;
+  });
+}
+
+// ─────────────────────────────────────────────────────────────
 // Update percentage when component dropdown changes
 // ─────────────────────────────────────────────────────────────
 function onComponentChange(rowNum) {
@@ -1078,7 +1229,6 @@ function onComponentChange(rowNum) {
   const areaEl = document.getElementById(`area_${rowNum}`);
 
   if (sel.value === '') {
-    // No component selected — clear & disable pct/area
     pctEl.value       = '';
     pctEl.placeholder = '—';
     pctEl.disabled    = true;
@@ -1096,13 +1246,13 @@ function onComponentChange(rowNum) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// Additional Items handlers
+// Additional Items dropdown change
 // ─────────────────────────────────────────────────────────────
 function onAddlChange(rowNum) {
-  const sel      = document.querySelector(`.addl-select[data-row="${rowNum}"]`);
+  const sel       = document.querySelector(`.addl-select[data-row="${rowNum}"]`);
   const unitBadge = document.getElementById(`addl_unit_${rowNum}`);
-  const areaEl   = document.getElementById(`addl_area_${rowNum}`);
-  const costEl   = document.getElementById(`addl_cost_${rowNum}`);
+  const areaEl    = document.getElementById(`addl_area_${rowNum}`);
+  const costEl    = document.getElementById(`addl_cost_${rowNum}`);
 
   if (sel.value === '') {
     unitBadge.textContent = '—';
@@ -1122,54 +1272,62 @@ function onAddlChange(rowNum) {
 function computeAddl() { compute(); }
 
 // ─────────────────────────────────────────────────────────────
-// Main computation
+// Main computation — reads ALL rows dynamically
 // ─────────────────────────────────────────────────────────────
 function compute() {
-  const unitCost     = getUnitCost();
-  const mainArea     = Math.max(0, parseFloat(document.getElementById('mainArea').value) || 0);
-  const structType   = document.getElementById('structuralType').value;
+  const unitCost   = getUnitCost();
+  const mainArea   = Math.max(0, parseFloat(document.getElementById('mainArea').value) || 0);
+  const structType = document.getElementById('structuralType').value;
 
   // Main floor cost
   const mainCost = mainArea * unitCost;
   document.getElementById('mainFormula').textContent =
     `${num2(mainArea)} × ${num2(unitCost)} = ${peso(mainCost)}`;
 
-  // Components
+  // ── Building Components ──
   let compAreaTotal = 0;
   let compCostTotal = 0;
-
-  for (let i = 1; i <= 5; i++) {
-    const area  = Math.max(0, parseFloat(document.getElementById(`area_${i}`).value) || 0);
-    const pct   = Math.max(0, parseFloat(document.getElementById(`pct_${i}`).value)  || 0);
-    const cost  = area * unitCost * (pct / 100);
+  const compRows = document.querySelectorAll('#compTbody tr');
+  compRows.forEach(tr => {
+    const sel  = tr.querySelector('.comp-select');
+    const rn   = sel ? sel.dataset.row : null;
+    if (!rn) return;
+    const area = Math.max(0, parseFloat(document.getElementById(`area_${rn}`)?.value) || 0);
+    const pct  = Math.max(0, parseFloat(document.getElementById(`pct_${rn}`)?.value)  || 0);
+    const cost = area * unitCost * (pct / 100);
     compAreaTotal += area;
     compCostTotal += cost;
-    document.getElementById(`cost_${i}`).textContent = peso(cost);
-  }
+    const costEl = document.getElementById(`cost_${rn}`);
+    if (costEl) costEl.textContent = peso(cost);
+  });
 
-  const totalCost  = mainCost + compCostTotal;
+  const totalCost = mainCost + compCostTotal;
 
   // ── Additional Items ──
   let addlCostTotal = 0;
-  let addlLines     = [];
-  for (let i = 1; i <= 5; i++) {
-    const sel  = document.querySelector(`.addl-select[data-row="${i}"]`);
-    const area = Math.max(0, parseFloat(document.getElementById(`addl_area_${i}`).value) || 0);
-    if (!sel || sel.value === '' || area === 0) {
-      document.getElementById(`addl_cost_${i}`).textContent = '₱0.00';
-      continue;
+  const addlLines   = [];
+  const addlRows    = document.querySelectorAll('#addlTbody tr');
+  addlRows.forEach(tr => {
+    const sel = tr.querySelector('.addl-select');
+    const rn  = sel ? sel.dataset.row : null;
+    if (!rn || !sel.value) {
+      const ce = document.getElementById(`addl_cost_${rn}`);
+      if (ce) ce.textContent = '₱0.00';
+      return;
     }
+    const area = Math.max(0, parseFloat(document.getElementById(`addl_area_${rn}`)?.value) || 0);
     const unit = ADDITIONAL_ITEMS[sel.value] || 0;
     const cost = area * unit;
     addlCostTotal += cost;
-    document.getElementById(`addl_cost_${i}`).textContent = peso(cost);
-    addlLines.push({ name: sel.value, area, unit, cost });
-  }
+    const costEl = document.getElementById(`addl_cost_${rn}`);
+    if (costEl) costEl.textContent = peso(cost);
+    if (area > 0) addlLines.push({ name: sel.value, area, unit, cost });
+  });
 
   const grandTotal = totalCost + addlCostTotal;
-  const marketVal  = Math.floor(grandTotal / 10) * 10;
+  const marketVal  = Math.round(grandTotal / 10) * 10;
   const assessRate = getAssessmentLevel(structType, marketVal);
-  const assessedV  = Math.floor(marketVal * assessRate / 10) * 10;
+  const assessedV  = Math.round(marketVal * assessRate / 10) * 10;
   const taxable    = assessedV * 0.02;
   const isGovt     = structType === 'Government';
 
@@ -1214,26 +1372,27 @@ function compute() {
 
   // ── Build formula breakdown text (like Excel yellow box) ──
   const fmtN = v => Number(v).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
-  const ct   = document.getElementById('constructionType').value;
 
   let lines = [];
   lines.push(`EST COST: ${fmtN(mainArea)} x ${fmtN(unitCost)} = ${fmtN(mainCost)}`);
 
-  for (let i = 1; i <= 5; i++) {
-    const compSel  = document.querySelector(`.comp-select[data-row="${i}"]`);
-    const compName = compSel ? compSel.value : `Component ${i}`;
-    const area     = Math.max(0, parseFloat(document.getElementById(`area_${i}`).value) || 0);
-    const pct      = Math.max(0, parseFloat(document.getElementById(`pct_${i}`).value)  || 0);
-    const cost     = area * unitCost * (pct / 100);
+  // ── Components lines — walk the DOM just like the compute loop ──
+  document.querySelectorAll('#compTbody tr').forEach(tr => {
+    const sel = tr.querySelector('.comp-select');
+    const rn  = sel ? sel.dataset.row : null;
+    if (!rn || !sel.value) return;
+    const area = Math.max(0, parseFloat(document.getElementById(`area_${rn}`)?.value) || 0);
+    const pct  = Math.max(0, parseFloat(document.getElementById(`pct_${rn}`)?.value)  || 0);
+    const cost = area * unitCost * (pct / 100);
     if (area > 0) {
-      lines.push(`${compName}: ${fmtN(area)} x ${fmtN(unitCost)} x ${(pct/100).toFixed(2)} = ${fmtN(cost)}`);
+      lines.push(`${sel.value}: ${fmtN(area)} x ${fmtN(unitCost)} x ${(pct/100).toFixed(2)} = ${fmtN(cost)}`);
     }
-  }
+  });
 
   lines.push('');
   lines.push(`Cons. Cost:    ${fmtN(totalCost)}`);
 
-  // Additional items in formula
+  // ── Additional items lines ──
   if (addlLines.length > 0) {
     lines.push('');
     lines.push('--- Additional Items ---');
@@ -1588,22 +1747,18 @@ function copyFormula() {
 
   resize();
 })();
+// ─────────────────────────────────────────────────────────────
+// Init — seed 5 rows for each table, then compute
+// ─────────────────────────────────────────────────────────────
 document.querySelectorAll('input[type=number]').forEach(el => {
   el.addEventListener('blur', () => {
     if (parseFloat(el.value) < 0) { el.value = 0; compute(); }
   });
 });
 
-// Init
 onConstructionChange();
-
-// Initialise all component rows — disable area/pct since default is "-- Select Component --"
-for (let i = 1; i <= 5; i++) {
-  const pctEl  = document.getElementById(`pct_${i}`);
-  const areaEl = document.getElementById(`area_${i}`);
-  pctEl.disabled  = true;
-  areaEl.disabled = true;
-}
+for (let s = 0; s < 5; s++) { addCompRow(); }
+for (let s = 0; s < 5; s++) { addAddlRow(); }
 </script>
 </body>
 </html>
