@@ -170,16 +170,47 @@ $js_additional_items  = json_encode($additional_items);
     --shadow-md: 0 6px 24px rgba(30,50,80,.10);
     --shadow-lg: 0 16px 48px rgba(30,50,80,.14);
     --radius:    14px;
+    --bg-primary: #fff;
+    --bg-secondary: #f4f7fb;
+    --text-primary: #1a2332;
+    --text-secondary: #4a5568;
+    --card-bg: #fff;
+    --input-bg: #fff;
+    --input-border: #e2e8f0;
+    --table-header-bg: #1a2332;
+    --table-header-text: #fff;
+  }
+
+  :root.dark-mode {
+    --green-50:  #0d3d24;
+    --green-100: #1a5a36;
+    --green-200: #2a7d52;
+    --ink:       #e1e8f0;
+    --ink-light: #a0aec0;
+    --border:    #374151;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,.3);
+    --shadow-md: 0 6px 24px rgba(0,0,0,.4);
+    --shadow-lg: 0 16px 48px rgba(0,0,0,.5);
+    --bg-primary: #0f1419;
+    --bg-secondary: #1a2332;
+    --text-primary: #e1e8f0;
+    --text-secondary: #a0aec0;
+    --card-bg: #1a2332;
+    --input-bg: #262d3d;
+    --input-border: #374151;
+    --table-header-bg: #0a0e16;
+    --table-header-text: #e1e8f0;
   }
 
   *, *::before, *::after { box-sizing: border-box; }
 
   body {
     font-family: 'DM Sans', sans-serif;
-    background: #f4f7fb;
-    color: var(--ink);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
     min-height: 100vh;
     padding: 2rem 1rem;
+    transition: background .3s, color .3s;
   }
 
   /* ── Page background texture ── */
@@ -190,6 +221,13 @@ $js_additional_items  = json_encode($additional_items);
       radial-gradient(ellipse 80% 60% at 20% 10%, rgba(76,175,125,.08) 0%, transparent 60%),
       radial-gradient(ellipse 60% 50% at 80% 90%, rgba(46,158,100,.06) 0%, transparent 55%);
     pointer-events: none; z-index: 0;
+    transition: background .3s;
+  }
+
+  :root.dark-mode body::before {
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(46,158,100,.04) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 90%, rgba(46,158,100,.02) 0%, transparent 55%);
   }
 
   .page-wrapper { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; }
@@ -210,28 +248,38 @@ $js_additional_items  = json_encode($additional_items);
     padding: .3rem .9rem;
     border-radius: 100px;
     margin-bottom: .75rem;
+    transition: background .3s, color .3s;
   }
+
+  :root.dark-mode .page-header .badge-label {
+    background: rgba(46, 158, 100, 0.2);
+    color: #4caf7d;
+  }
+
   .page-header h1 {
     font-family: 'Playfair Display', serif;
     font-size: clamp(1.7rem, 4vw, 2.4rem);
     font-weight: 600;
-    color: var(--ink);
+    color: var(--text-primary);
     margin: 0 0 .4rem;
     line-height: 1.15;
+    transition: color .3s;
   }
   .page-header p {
-    color: var(--ink-light);
+    color: var(--text-secondary);
     font-size: .92rem;
     margin: 0;
+    transition: color .3s;
   }
 
   /* ── Card ── */
   .calc-card {
-    background: #fff;
+    background: var(--card-bg);
     border-radius: var(--radius);
     box-shadow: var(--shadow-lg);
     overflow: hidden;
     border: 1px solid var(--border);
+    transition: background .3s, border-color .3s, box-shadow .3s;
   }
 
   /* ── Section headers ── */
@@ -242,12 +290,14 @@ $js_additional_items  = json_encode($additional_items);
     padding: 1.1rem 1.6rem;
     background: var(--green-50);
     border-bottom: 1px solid var(--green-200);
+    transition: background .3s, border-color .3s;
   }
   .section-header .dot {
     width: 8px; height: 8px;
     border-radius: 50%;
     background: var(--green-500);
     flex-shrink: 0;
+    transition: background .3s;
   }
   .section-header span {
     font-size: .78rem;
@@ -255,14 +305,21 @@ $js_additional_items  = json_encode($additional_items);
     letter-spacing: .09em;
     text-transform: uppercase;
     color: var(--green-600);
+    transition: color .3s;
   }
 
   /* ── Input Section ── */
   .input-section {
     padding: 1.5rem 1.6rem 1.3rem;
-    background: linear-gradient(135deg, var(--green-50) 0%, #f8fffe 100%);
+    background: linear-gradient(135deg, var(--green-50) 0%, rgba(248, 255, 254, 0.3) 100%);
     border-bottom: 1px solid var(--border);
+    transition: background .3s;
   }
+
+  :root.dark-mode .input-section {
+    background: linear-gradient(135deg, var(--green-50) 0%, rgba(38, 45, 61, 0.3) 100%);
+  }
+
   .input-section .row { gap: .6rem 0; }
 
   label.form-label {
@@ -270,19 +327,20 @@ $js_additional_items  = json_encode($additional_items);
     font-weight: 600;
     letter-spacing: .04em;
     text-transform: uppercase;
-    color: var(--ink-light);
+    color: var(--text-secondary);
     margin-bottom: .35rem;
+    transition: color .3s;
   }
 
   .form-select, .form-control {
-    border: 1.5px solid var(--border);
+    border: 1.5px solid var(--input-border);
     border-radius: 9px;
     padding: .55rem .85rem;
     font-size: .9rem;
     font-family: 'DM Sans', sans-serif;
-    color: var(--ink);
-    background-color: #fff;
-    transition: border-color .18s, box-shadow .18s;
+    color: var(--text-primary);
+    background-color: var(--input-bg);
+    transition: border-color .18s, box-shadow .18s, background .2s, color .2s;
     height: 44px;
   }
   .form-select:focus, .form-control:focus {
@@ -306,7 +364,15 @@ $js_additional_items  = json_encode($additional_items);
     color: var(--green-600);
     min-width: 140px;
     height: 44px;
+    transition: background .3s, border-color .3s, color .3s;
   }
+
+  :root.dark-mode .unit-cost-chip {
+    background: rgba(46, 158, 100, 0.15);
+    border-color: rgba(76, 175, 125, 0.3);
+    color: #4caf7d;
+  }
+
   .unit-cost-chip .chip-label {
     font-size: .72rem;
     font-weight: 600;
@@ -325,8 +391,8 @@ $js_additional_items  = json_encode($additional_items);
 
   .table { margin: 0; border-collapse: separate; border-spacing: 0; }
   .table thead th {
-    background: var(--ink);
-    color: #fff;
+    background: var(--table-header-bg);
+    color: var(--table-header-text);
     font-size: .72rem;
     font-weight: 600;
     letter-spacing: .08em;
@@ -334,6 +400,7 @@ $js_additional_items  = json_encode($additional_items);
     padding: .75rem 1rem;
     border: none;
     white-space: nowrap;
+    transition: background .3s, color .3s;
   }
   .table thead th:first-child { border-radius: 10px 0 0 0; }
   .table thead th:last-child  { border-radius: 0 10px 0 0; }
@@ -345,6 +412,8 @@ $js_additional_items  = json_encode($additional_items);
     padding: .6rem .8rem;
     border-bottom: 1px solid var(--border);
     border-left: none; border-right: none; border-top: none;
+    color: var(--text-primary);
+    transition: border-color .3s, color .3s;
   }
 
   .row-num {
@@ -370,17 +439,19 @@ $js_additional_items  = json_encode($additional_items);
     content: '%';
     position: absolute; right: .7rem; top: 50%;
     transform: translateY(-50%);
-    font-size: .82rem; color: var(--ink-light); pointer-events: none;
+    font-size: .82rem; color: var(--text-secondary); pointer-events: none;
+    transition: color .3s;
   }
 
   .computed-cost {
     font-family: 'DM Mono', monospace;
     font-size: .9rem;
     font-weight: 500;
-    color: var(--ink);
+    color: var(--text-primary);
     text-align: right;
     white-space: nowrap;
     min-width: 130px;
+    transition: color .3s;
   }
 
   /* ── Summary Section ── */
@@ -388,6 +459,11 @@ $js_additional_items  = json_encode($additional_items);
     background: var(--ink);
     padding: 1.4rem 1.6rem;
     border-top: 1px solid rgba(255,255,255,.07);
+    transition: background .3s;
+  }
+
+  :root.dark-mode .summary-section {
+    background: #0a0d16;
   }
 
   .summary-grid {
@@ -403,7 +479,14 @@ $js_additional_items  = json_encode($additional_items);
     border: 1px solid rgba(255,255,255,.1);
     border-radius: 10px;
     padding: 1rem 1.2rem;
+    transition: background .3s, border-color .3s;
   }
+
+  :root.dark-mode .summary-item {
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.08);
+  }
+
   .summary-item .s-label {
     font-size: .72rem;
     font-weight: 600;
@@ -411,6 +494,7 @@ $js_additional_items  = json_encode($additional_items);
     text-transform: uppercase;
     color: rgba(255,255,255,.5);
     margin-bottom: .35rem;
+    transition: color .3s;
   }
   .summary-item .s-value {
     font-family: 'DM Mono', monospace;
@@ -423,6 +507,7 @@ $js_additional_items  = json_encode($additional_items);
     background: var(--green-500);
     border-color: var(--green-400);
     grid-column: 1 / -1;
+    transition: background .3s, border-color .3s;
   }
   .summary-item.highlight .s-label { color: rgba(255,255,255,.75); }
   .summary-item.highlight .s-value { font-size: 2rem; color: #fff; }
@@ -432,7 +517,13 @@ $js_additional_items  = json_encode($additional_items);
     padding: 1.3rem 1.6rem;
     background: #fafbff;
     border-top: 1px solid var(--border);
+    transition: background .3s;
   }
+
+  :root.dark-mode .assessment-section {
+    background: #151c2a;
+  }
+
   .assess-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -446,7 +537,13 @@ $js_additional_items  = json_encode($additional_items);
     padding: .9rem 1rem;
     background: #fff;
     box-shadow: var(--shadow-sm);
+    transition: background .3s, border-color .3s, box-shadow .3s;
   }
+
+  :root.dark-mode .assess-card {
+    background: #1a2332;
+  }
+
   .assess-card .ac-label {
     font-size: .7rem;
     font-weight: 600;
@@ -459,27 +556,37 @@ $js_additional_items  = json_encode($additional_items);
     font-family: 'DM Mono', monospace;
     font-size: 1.05rem;
     font-weight: 500;
-    color: var(--ink);
+    color: var(--text-primary);
+    transition: color .3s;
   }
   .assess-card.accent {
     border-color: var(--green-400);
     background: var(--green-50);
+    transition: background .3s, border-color .3s;
   }
+
+  :root.dark-mode .assess-card.accent {
+    background: rgba(46, 158, 100, 0.15);
+    border-color: var(--green-400);
+  }
+
   .assess-card.accent .ac-value { color: var(--green-600); }
 
   /* ── Tooltip on formula ── */
   .formula-hint {
     font-size: .72rem;
-    color: var(--ink-light);
+    color: var(--text-secondary);
     margin-top: .3rem;
     font-family: 'DM Mono', monospace;
     opacity: .7;
+    transition: color .3s;
   }
 
   /* ── Formula Breakdown Box ── */
   .formula-box-section {
     padding: 0 1.6rem 1.6rem;
-    background: #fff;
+    background: var(--card-bg);
+    transition: background .3s;
   }
 
   .formula-yellow-box {
@@ -488,6 +595,13 @@ $js_additional_items  = json_encode($additional_items);
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 2px 12px rgba(249,200,0,.18);
+    transition: background .3s, border-color .3s, box-shadow .3s;
+  }
+
+  :root.dark-mode .formula-yellow-box {
+    background: #332a0a;
+    border-color: #6b5900;
+    box-shadow: 0 2px 12px rgba(249,200,0,.08);
   }
 
   .formula-box-header {
@@ -496,6 +610,11 @@ $js_additional_items  = json_encode($additional_items);
     justify-content: space-between;
     background: #f9c800;
     padding: .55rem 1rem;
+    transition: background .3s;
+  }
+
+  :root.dark-mode .formula-box-header {
+    background: #6b5900;
   }
 
   .formula-box-title {
@@ -503,6 +622,11 @@ $js_additional_items  = json_encode($additional_items);
     font-weight: 700;
     color: #5a3e00;
     letter-spacing: .04em;
+    transition: color .3s;
+  }
+
+  :root.dark-mode .formula-box-title {
+    color: #f9c800;
   }
 
   .copy-btn {
@@ -524,6 +648,12 @@ $js_additional_items  = json_encode($additional_items);
   .copy-btn:active { transform: scale(.96); }
   .copy-btn.copied { background: var(--green-600); }
 
+  :root.dark-mode .copy-btn {
+    background: #6b5900;
+  }
+  :root.dark-mode .copy-btn:hover { background: #8b7000; }
+  :root.dark-mode .copy-btn.copied { background: var(--green-500); }
+
   .formula-textarea {
     width: 100%;
     border: none;
@@ -541,14 +671,31 @@ $js_additional_items  = json_encode($additional_items);
     white-space: pre;
     user-select: text;
     -webkit-user-select: text;
-    caret-color: transparent; /* hide blinking caret — read-like feel */
+    caret-color: transparent;
+    transition: background .3s, color .3s;
   }
+
+  :root.dark-mode .formula-textarea {
+    background: #1a1410;
+    color: #e8d700;
+  }
+
   .formula-textarea:focus {
-    caret-color: #9a7a00; /* show caret when actively focused */
+    caret-color: #9a7a00;
   }
+
+  :root.dark-mode .formula-textarea:focus {
+    caret-color: #e8d700;
+  }
+
   .formula-textarea::selection {
     background: #f9c800;
     color: #2d1f00;
+  }
+
+  :root.dark-mode .formula-textarea::selection {
+    background: #6b5900;
+    color: #e8d700;
   }
 
   .formula-box-footer {
@@ -557,12 +704,24 @@ $js_additional_items  = json_encode($additional_items);
     display: flex;
     align-items: center;
     gap: 1rem;
+    transition: border-color .3s;
   }
+
+  :root.dark-mode .formula-box-footer {
+    border-top-color: #6b5900;
+  }
+
   .formula-tip {
     font-size: .72rem;
     color: #9a7a00;
     font-style: italic;
+    transition: color .3s;
   }
+
+  :root.dark-mode .formula-tip {
+    color: #e8d700;
+  }
+
   .copy-confirm {
     font-size: .75rem;
     font-weight: 700;
@@ -575,7 +734,15 @@ $js_additional_items  = json_encode($additional_items);
     color: #b0bec5;
     cursor: not-allowed;
     border-color: #e2e8f0;
+    transition: background .3s, color .3s, border-color .3s;
   }
+
+  :root.dark-mode .form-control:disabled {
+    background: #0a0d14;
+    color: #6b7280;
+    border-color: #2d3748;
+  }
+
   .pct-input-wrap input:disabled + * { opacity: .4; }
 
   /* ── Add / Remove Row controls ── */
@@ -597,7 +764,7 @@ $js_additional_items  = json_encode($additional_items);
     font-weight: 600;
     font-family: 'DM Sans', sans-serif;
     cursor: pointer;
-    transition: background .15s, border-color .15s, transform .1s;
+    transition: background .15s, border-color .15s, transform .1s, color .3s;
   }
   .add-row-btn:hover {
     background: var(--green-50);
@@ -606,6 +773,15 @@ $js_additional_items  = json_encode($additional_items);
   }
   .add-row-btn:active { transform: scale(.97); }
 
+  :root.dark-mode .add-row-btn {
+    border-color: rgba(76, 175, 125, 0.4);
+  }
+
+  :root.dark-mode .add-row-btn:hover {
+    background: rgba(46, 158, 100, 0.15);
+    border-color: var(--green-400);
+  }
+
   .add-row-btn-blue {
     border-color: #7aa3d4;
     color: #3d5a80;
@@ -613,6 +789,16 @@ $js_additional_items  = json_encode($additional_items);
   .add-row-btn-blue:hover {
     background: #e8f0fe;
     border-color: #3d5a80;
+  }
+
+  :root.dark-mode .add-row-btn-blue {
+    border-color: rgba(74, 144, 226, 0.4);
+    color: #7aa3d4;
+  }
+
+  :root.dark-mode .add-row-btn-blue:hover {
+    background: rgba(74, 144, 226, 0.1);
+    border-color: #7aa3d4;
   }
 
   .remove-row-btn {
@@ -629,6 +815,8 @@ $js_additional_items  = json_encode($additional_items);
   }
   .remove-row-btn:hover { color: #e74c3c; background: #fff0f0; }
 
+  :root.dark-mode .remove-row-btn:hover { color: #f87171; background: rgba(220, 38, 38, 0.15); }
+
   /* row enter animation */
   @keyframes rowSlideIn {
     from { opacity: 0; transform: translateY(-8px); }
@@ -642,15 +830,22 @@ $js_additional_items  = json_encode($additional_items);
   }
   .addl-table thead th {
     background: #3d5a80;
+    transition: background .3s;
   }
+
+  :root.dark-mode .addl-table thead th {
+    background: #1a2332;
+  }
+
   .addl-computed-cost {
     font-family: 'DM Mono', monospace;
     font-size: .9rem;
     font-weight: 500;
-    color: var(--ink);
+    color: var(--text-primary);
     text-align: right;
     white-space: nowrap;
     min-width: 130px;
+    transition: color .3s;
   }
   .unit-cost-badge {
     display: inline-block;
@@ -664,19 +859,43 @@ $js_additional_items  = json_encode($additional_items);
     font-weight: 500;
     min-width: 70px;
     text-align: center;
+    transition: background .3s, color .3s, border-color .3s;
   }
+
+  :root.dark-mode .unit-cost-badge {
+    background: rgba(46, 158, 100, 0.15);
+    color: #4caf7d;
+    border-color: rgba(76, 175, 125, 0.3);
+  }
+
   .unit-cost-badge.empty {
     background: #f1f5f9;
     color: #aaa;
     border-color: #e2e8f0;
   }
+
+  :root.dark-mode .unit-cost-badge.empty {
+    background: #1a2332;
+    color: #6b7280;
+    border-color: #374151;
+  }
+
   /* Summary total additional cost row */
   .summary-item.addl-highlight {
     background: rgba(61,90,128,.15);
     border-color: rgba(61,90,128,.3);
+    transition: background .3s, border-color .3s;
   }
+
+  :root.dark-mode .summary-item.addl-highlight {
+    background: rgba(76, 175, 125, 0.1);
+    border-color: rgba(76, 175, 125, 0.2);
+  }
+
   .summary-item.addl-highlight .s-label { color: rgba(255,255,255,.6); }
   .summary-item.addl-highlight .s-value { color: #aed6f1; }
+
+  :root.dark-mode .summary-item.addl-highlight .s-value { color: #4caf7d; }
 
   /* ── Background Game Canvas ── */
   #bgCanvas {
@@ -691,6 +910,31 @@ $js_additional_items  = json_encode($additional_items);
     pointer-events: auto;
     cursor: crosshair;
   }
+
+  /* ── Dark Mode Toggle Button ── */
+  #darkModeToggle {
+    position: fixed;
+    bottom: 1.2rem;
+    right: 5.8rem;
+    z-index: 100;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: .5rem 1rem .5rem .75rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .78rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,.2);
+    transition: background .2s, transform .15s;
+    user-select: none;
+  }
+  #darkModeToggle:hover { background: var(--green-600); transform: translateY(-2px); }
+  #darkModeToggle .dm-icon { font-size: 1rem; }
 
   /* ── Game toggle button ── */
   #gameToggle {
@@ -782,6 +1026,10 @@ $js_additional_items  = json_encode($additional_items);
     <span class="hud-val" id="hudLevel">1</span>
   </div>
 </div>
+
+<button id="darkModeToggle" onclick="toggleDarkMode()">
+  <span class="dm-icon">🌙</span> Dark Mode
+</button>
 
 <button id="gameToggle" onclick="toggleGame()">
   <span class="gt-icon">🏗️</span> Play Background Game
@@ -1029,6 +1277,55 @@ $js_additional_items  = json_encode($additional_items);
 </div><!-- /.page-wrapper -->
 
 <script>
+// ─────────────────────────────────────────────────────────────
+// DARK MODE TOGGLE
+// ─────────────────────────────────────────────────────────────
+function toggleDarkMode() {
+  const html = document.documentElement;
+  const btn = document.getElementById('darkModeToggle');
+  
+  html.classList.toggle('dark-mode');
+  const isDark = html.classList.contains('dark-mode');
+  
+  // Save preference to localStorage
+  localStorage.setItem('darkMode', isDark);
+  
+  // Update button text and icon
+  if (isDark) {
+    btn.innerHTML = '<span class="dm-icon">☀️</span> Light Mode';
+  } else {
+    btn.innerHTML = '<span class="dm-icon">🌙</span> Dark Mode';
+  }
+}
+
+// Check for saved dark mode preference or system preference on page load
+function initDarkMode() {
+  const savedDarkMode = localStorage.getItem('darkMode');
+  const prefersLight = localStorage.getItem('darkMode') === 'false';
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  
+  let shouldBeDark = false;
+  
+  if (savedDarkMode !== null) {
+    shouldBeDark = savedDarkMode === 'true';
+  } else if (prefersDark) {
+    shouldBeDark = true;
+  }
+  
+  if (shouldBeDark) {
+    document.documentElement.classList.add('dark-mode');
+    const btn = document.getElementById('darkModeToggle');
+    if (btn) btn.innerHTML = '<span class="dm-icon">☀️</span> Light Mode';
+  }
+}
+
+// Initialize dark mode when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initDarkMode);
+} else {
+  initDarkMode();
+}
+
 // ─────────────────────────────────────────────────────────────
 // PHP → JS data injection
 // ─────────────────────────────────────────────────────────────
@@ -1748,7 +2045,7 @@ function copyFormula() {
   resize();
 })();
 // ─────────────────────────────────────────────────────────────
-// Init — seed 5 rows for each table, then compute
+// Init — seed 1 row for each table (reduced from 5), then compute
 // ─────────────────────────────────────────────────────────────
 document.querySelectorAll('input[type=number]').forEach(el => {
   el.addEventListener('blur', () => {
@@ -1757,8 +2054,8 @@ document.querySelectorAll('input[type=number]').forEach(el => {
 });
 
 onConstructionChange();
-for (let s = 0; s < 5; s++) { addCompRow(); }
-for (let s = 0; s < 5; s++) { addAddlRow(); }
+for (let s = 0; s < 1; s++) { addCompRow(); }
+for (let s = 0; s < 1; s++) { addAddlRow(); }
 </script>
 </body>
 </html>
