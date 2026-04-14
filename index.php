@@ -139,6 +139,8 @@ $additional_items = [
     'Walling - Fancy Tiles'                 => 450.00,
     'Walling - Synthetic Rubble'            => 400.00,
     'Walling - Bricks'                      => 400.00,
+    'Swimming Pool -V(A)'                      => 7570.00,
+    'Swimming Pool -V(B)'                      => 6890.00,
 ];
 
 // Pass PHP data to JavaScript
@@ -182,24 +184,24 @@ $js_additional_items  = json_encode($additional_items);
   }
 
   :root.dark-mode {
-    --green-50:  #0d3d24;
-    --green-100: #1a5a36;
-    --green-200: #2a7d52;
-    --ink:       #e1e8f0;
-    --ink-light: #a0aec0;
-    --border:    #374151;
-    --shadow-sm: 0 2px 8px rgba(0,0,0,.3);
-    --shadow-md: 0 6px 24px rgba(0,0,0,.4);
-    --shadow-lg: 0 16px 48px rgba(0,0,0,.5);
-    --bg-primary: #0f1419;
-    --bg-secondary: #1a2332;
-    --text-primary: #e1e8f0;
-    --text-secondary: #a0aec0;
-    --card-bg: #1a2332;
-    --input-bg: #262d3d;
-    --input-border: #374151;
-    --table-header-bg: #0a0e16;
-    --table-header-text: #e1e8f0;
+    --green-50:  #1a4d3e;
+    --green-100: #2a6a54;
+    --green-200: #3a8769;
+    --ink:       #e8f0f7;
+    --ink-light: #b8c5d6;
+    --border:    #4a5a72;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,.25);
+    --shadow-md: 0 6px 24px rgba(0,0,0,.3);
+    --shadow-lg: 0 16px 48px rgba(0,0,0,.35);
+    --bg-primary: #1a202c;
+    --bg-secondary: #242d3d;
+    --text-primary: #e8f0f7;
+    --text-secondary: #b8c5d6;
+    --card-bg: #2a3a4d;
+    --input-bg: #1f2937;
+    --input-border: #4a5a72;
+    --table-header-bg: #1f2937;
+    --table-header-text: #e8f0f7;
   }
 
   *, *::before, *::after { box-sizing: border-box; }
@@ -252,8 +254,8 @@ $js_additional_items  = json_encode($additional_items);
   }
 
   :root.dark-mode .page-header .badge-label {
-    background: rgba(46, 158, 100, 0.2);
-    color: #4caf7d;
+    background: rgba(58, 135, 105, 0.2);
+    color: #7dd4c5;
   }
 
   .page-header h1 {
@@ -368,9 +370,9 @@ $js_additional_items  = json_encode($additional_items);
   }
 
   :root.dark-mode .unit-cost-chip {
-    background: rgba(46, 158, 100, 0.15);
-    border-color: rgba(76, 175, 125, 0.3);
-    color: #4caf7d;
+    background: rgba(58, 135, 105, 0.15);
+    border-color: rgba(122, 211, 197, 0.3);
+    color: #7dd4c5;
   }
 
   .unit-cost-chip .chip-label {
@@ -483,8 +485,8 @@ $js_additional_items  = json_encode($additional_items);
   }
 
   :root.dark-mode .summary-item {
-    background: rgba(255,255,255,.03);
-    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(58, 135, 105, 0.08);
+    border: 1px solid rgba(122, 211, 197, 0.15);
   }
 
   .summary-item .s-label {
@@ -541,7 +543,8 @@ $js_additional_items  = json_encode($additional_items);
   }
 
   :root.dark-mode .assess-card {
-    background: #1a2332;
+    background: #2a3a4d;
+    border-color: #4a5a72;
   }
 
   .assess-card .ac-label {
@@ -566,11 +569,13 @@ $js_additional_items  = json_encode($additional_items);
   }
 
   :root.dark-mode .assess-card.accent {
-    background: rgba(46, 158, 100, 0.15);
-    border-color: var(--green-400);
+    background: rgba(58, 135, 105, 0.2);
+    border-color: #7dd4c5;
   }
 
   .assess-card.accent .ac-value { color: var(--green-600); }
+
+  :root.dark-mode .assess-card.accent .ac-value { color: #7dd4c5; }
 
   /* ── Tooltip on formula ── */
   .formula-hint {
@@ -599,9 +604,9 @@ $js_additional_items  = json_encode($additional_items);
   }
 
   :root.dark-mode .formula-yellow-box {
-    background: #332a0a;
-    border-color: #6b5900;
-    box-shadow: 0 2px 12px rgba(249,200,0,.08);
+    background: #2a3a4d;
+    border-color: #d4a574;
+    box-shadow: 0 2px 12px rgba(212,165,116,.1);
   }
 
   .formula-box-header {
@@ -614,7 +619,8 @@ $js_additional_items  = json_encode($additional_items);
   }
 
   :root.dark-mode .formula-box-header {
-    background: #6b5900;
+    background: #3d4f68;
+    border-bottom: 1px solid #d4a574;
   }
 
   .formula-box-title {
@@ -626,7 +632,7 @@ $js_additional_items  = json_encode($additional_items);
   }
 
   :root.dark-mode .formula-box-title {
-    color: #f9c800;
+    color: #d4a574;
   }
 
   .copy-btn {
@@ -649,10 +655,11 @@ $js_additional_items  = json_encode($additional_items);
   .copy-btn.copied { background: var(--green-600); }
 
   :root.dark-mode .copy-btn {
-    background: #6b5900;
+    background: #4a5a72;
+    color: #d4a574;
   }
-  :root.dark-mode .copy-btn:hover { background: #8b7000; }
-  :root.dark-mode .copy-btn.copied { background: var(--green-500); }
+  :root.dark-mode .copy-btn:hover { background: #5a6a82; }
+  :root.dark-mode .copy-btn.copied { background: #3a8769; }
 
   .formula-textarea {
     width: 100%;
@@ -676,8 +683,8 @@ $js_additional_items  = json_encode($additional_items);
   }
 
   :root.dark-mode .formula-textarea {
-    background: #1a1410;
-    color: #e8d700;
+    background: #1f2937;
+    color: #d4a574;
   }
 
   .formula-textarea:focus {
@@ -685,7 +692,7 @@ $js_additional_items  = json_encode($additional_items);
   }
 
   :root.dark-mode .formula-textarea:focus {
-    caret-color: #e8d700;
+    caret-color: #d4a574;
   }
 
   .formula-textarea::selection {
@@ -694,8 +701,8 @@ $js_additional_items  = json_encode($additional_items);
   }
 
   :root.dark-mode .formula-textarea::selection {
-    background: #6b5900;
-    color: #e8d700;
+    background: #4a5a72;
+    color: #d4a574;
   }
 
   .formula-box-footer {
@@ -708,7 +715,7 @@ $js_additional_items  = json_encode($additional_items);
   }
 
   :root.dark-mode .formula-box-footer {
-    border-top-color: #6b5900;
+    border-top-color: #4a5a72;
   }
 
   .formula-tip {
@@ -719,7 +726,7 @@ $js_additional_items  = json_encode($additional_items);
   }
 
   :root.dark-mode .formula-tip {
-    color: #e8d700;
+    color: #d4a574;
   }
 
   .copy-confirm {
@@ -738,9 +745,9 @@ $js_additional_items  = json_encode($additional_items);
   }
 
   :root.dark-mode .form-control:disabled {
-    background: #0a0d14;
-    color: #6b7280;
-    border-color: #2d3748;
+    background: #1a1f2a;
+    color: #6b7a8f;
+    border-color: #4a5a72;
   }
 
   .pct-input-wrap input:disabled + * { opacity: .4; }
@@ -774,12 +781,13 @@ $js_additional_items  = json_encode($additional_items);
   .add-row-btn:active { transform: scale(.97); }
 
   :root.dark-mode .add-row-btn {
-    border-color: rgba(76, 175, 125, 0.4);
+    border-color: rgba(122, 211, 197, 0.4);
+    color: #7dd4c5;
   }
 
   :root.dark-mode .add-row-btn:hover {
-    background: rgba(46, 158, 100, 0.15);
-    border-color: var(--green-400);
+    background: rgba(58, 135, 105, 0.15);
+    border-color: #7dd4c5;
   }
 
   .add-row-btn-blue {
@@ -792,13 +800,13 @@ $js_additional_items  = json_encode($additional_items);
   }
 
   :root.dark-mode .add-row-btn-blue {
-    border-color: rgba(74, 144, 226, 0.4);
-    color: #7aa3d4;
+    border-color: rgba(122, 211, 197, 0.4);
+    color: #7dd4c5;
   }
 
   :root.dark-mode .add-row-btn-blue:hover {
-    background: rgba(74, 144, 226, 0.1);
-    border-color: #7aa3d4;
+    background: rgba(58, 135, 105, 0.15);
+    border-color: #7dd4c5;
   }
 
   .remove-row-btn {
@@ -834,7 +842,7 @@ $js_additional_items  = json_encode($additional_items);
   }
 
   :root.dark-mode .addl-table thead th {
-    background: #1a2332;
+    background: #1f2937;
   }
 
   .addl-computed-cost {
@@ -863,9 +871,9 @@ $js_additional_items  = json_encode($additional_items);
   }
 
   :root.dark-mode .unit-cost-badge {
-    background: rgba(46, 158, 100, 0.15);
-    color: #4caf7d;
-    border-color: rgba(76, 175, 125, 0.3);
+    background: rgba(58, 135, 105, 0.2);
+    color: #7dd4c5;
+    border-color: rgba(122, 211, 197, 0.3);
   }
 
   .unit-cost-badge.empty {
@@ -875,9 +883,9 @@ $js_additional_items  = json_encode($additional_items);
   }
 
   :root.dark-mode .unit-cost-badge.empty {
-    background: #1a2332;
-    color: #6b7280;
-    border-color: #374151;
+    background: #1f2937;
+    color: #8a99b0;
+    border-color: #4a5a72;
   }
 
   /* Summary total additional cost row */
@@ -888,14 +896,14 @@ $js_additional_items  = json_encode($additional_items);
   }
 
   :root.dark-mode .summary-item.addl-highlight {
-    background: rgba(76, 175, 125, 0.1);
-    border-color: rgba(76, 175, 125, 0.2);
+    background: rgba(122, 211, 197, 0.1);
+    border-color: rgba(122, 211, 197, 0.2);
   }
 
   .summary-item.addl-highlight .s-label { color: rgba(255,255,255,.6); }
   .summary-item.addl-highlight .s-value { color: #aed6f1; }
 
-  :root.dark-mode .summary-item.addl-highlight .s-value { color: #4caf7d; }
+  :root.dark-mode .summary-item.addl-highlight .s-value { color: #7dd4c5; }
 
   /* ── Background Game Canvas ── */
   #bgCanvas {
@@ -2056,6 +2064,16 @@ document.querySelectorAll('input[type=number]').forEach(el => {
 onConstructionChange();
 for (let s = 0; s < 1; s++) { addCompRow(); }
 for (let s = 0; s < 1; s++) { addAddlRow(); }
+</script>
+    
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-H037GPSG7X"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-H037GPSG7X');
 </script>
 </body>
 </html>
