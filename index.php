@@ -172,64 +172,28 @@ $js_additional_items  = json_encode($additional_items);
     --shadow-md: 0 6px 24px rgba(30,50,80,.10);
     --shadow-lg: 0 16px 48px rgba(30,50,80,.14);
     --radius:    14px;
-    --bg-primary: #fff;
-    --bg-secondary: #f4f7fb;
-    --text-primary: #1a2332;
-    --text-secondary: #4a5568;
-    --card-bg: #fff;
-    --input-bg: #fff;
-    --input-border: #e2e8f0;
-    --table-header-bg: #1a2332;
-    --table-header-text: #fff;
-  }
-
-  :root.dark-mode {
-    --green-50:  #1a4d3e;
-    --green-100: #2a6a54;
-    --green-200: #3a8769;
-    --ink:       #e8f0f7;
-    --ink-light: #b8c5d6;
-    --border:    #4a5a72;
-    --shadow-sm: 0 2px 8px rgba(0,0,0,.25);
-    --shadow-md: 0 6px 24px rgba(0,0,0,.3);
-    --shadow-lg: 0 16px 48px rgba(0,0,0,.35);
-    --bg-primary: #1a202c;
-    --bg-secondary: #242d3d;
-    --text-primary: #e8f0f7;
-    --text-secondary: #b8c5d6;
-    --card-bg: #2a3a4d;
-    --input-bg: #1f2937;
-    --input-border: #4a5a72;
-    --table-header-bg: #1f2937;
-    --table-header-text: #e8f0f7;
   }
 
   *, *::before, *::after { box-sizing: border-box; }
 
   body {
     font-family: 'DM Sans', sans-serif;
-    background: var(--bg-secondary);
-    color: var(--text-primary);
+    background: url('https://scontent-mnl3-2.xx.fbcdn.net/v/t39.30808-6/580567884_1272694124886948_8175417312678070392_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=b895b5&_nc_ohc=C81KWtROz8oQ7kNvwEW_WkW&_nc_oc=AdoxSfEL5683OiSIEqLjE4QVwjENZ_NM1UiREkfNYiw1weIw_Cq1gBGyrpyM-gI6yU8&_nc_zt=23&_nc_ht=scontent-mnl3-2.xx&_nc_gid=v1q8clgt6ACG2FfMlsF7eQ&_nc_ss=7b289&oh=00_Af3YN5QKxmBDg392yPP471bCb8AMGOpkcQO1kYPdEderVQ&oe=69F5E422') center center / cover fixed;
+    color: var(--ink);
     min-height: 100vh;
     padding: 2rem 1rem;
-    transition: background .3s, color .3s;
   }
 
-  /* ── Page background texture ── */
+  /* Soft white wash over the background so it doesn't compete with the UI */
   body::before {
     content: '';
-    position: fixed; inset: 0;
-    background:
-      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(76,175,125,.08) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 50% at 80% 90%, rgba(46,158,100,.06) 0%, transparent 55%);
-    pointer-events: none; z-index: 0;
-    transition: background .3s;
-  }
-
-  :root.dark-mode body::before {
-    background:
-      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(46,158,100,.04) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 50% at 80% 90%, rgba(46,158,100,.02) 0%, transparent 55%);
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    pointer-events: none;
+    z-index: 0;
   }
 
   .page-wrapper { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; }
@@ -250,38 +214,28 @@ $js_additional_items  = json_encode($additional_items);
     padding: .3rem .9rem;
     border-radius: 100px;
     margin-bottom: .75rem;
-    transition: background .3s, color .3s;
   }
-
-  :root.dark-mode .page-header .badge-label {
-    background: rgba(58, 135, 105, 0.2);
-    color: #7dd4c5;
-  }
-
   .page-header h1 {
     font-family: 'Playfair Display', serif;
     font-size: clamp(1.7rem, 4vw, 2.4rem);
     font-weight: 600;
-    color: var(--text-primary);
+    color: var(--ink);
     margin: 0 0 .4rem;
     line-height: 1.15;
-    transition: color .3s;
   }
   .page-header p {
-    color: var(--text-secondary);
+    color: var(--ink-light);
     font-size: .92rem;
     margin: 0;
-    transition: color .3s;
   }
 
   /* ── Card ── */
   .calc-card {
-    background: var(--card-bg);
+    background: #fff;
     border-radius: var(--radius);
     box-shadow: var(--shadow-lg);
     overflow: hidden;
     border: 1px solid var(--border);
-    transition: background .3s, border-color .3s, box-shadow .3s;
   }
 
   /* ── Section headers ── */
@@ -292,14 +246,12 @@ $js_additional_items  = json_encode($additional_items);
     padding: 1.1rem 1.6rem;
     background: var(--green-50);
     border-bottom: 1px solid var(--green-200);
-    transition: background .3s, border-color .3s;
   }
   .section-header .dot {
     width: 8px; height: 8px;
     border-radius: 50%;
     background: var(--green-500);
     flex-shrink: 0;
-    transition: background .3s;
   }
   .section-header span {
     font-size: .78rem;
@@ -307,21 +259,14 @@ $js_additional_items  = json_encode($additional_items);
     letter-spacing: .09em;
     text-transform: uppercase;
     color: var(--green-600);
-    transition: color .3s;
   }
 
   /* ── Input Section ── */
   .input-section {
     padding: 1.5rem 1.6rem 1.3rem;
-    background: linear-gradient(135deg, var(--green-50) 0%, rgba(248, 255, 254, 0.3) 100%);
+    background: linear-gradient(135deg, var(--green-50) 0%, #f8fffe 100%);
     border-bottom: 1px solid var(--border);
-    transition: background .3s;
   }
-
-  :root.dark-mode .input-section {
-    background: linear-gradient(135deg, var(--green-50) 0%, rgba(38, 45, 61, 0.3) 100%);
-  }
-
   .input-section .row { gap: .6rem 0; }
 
   label.form-label {
@@ -329,20 +274,19 @@ $js_additional_items  = json_encode($additional_items);
     font-weight: 600;
     letter-spacing: .04em;
     text-transform: uppercase;
-    color: var(--text-secondary);
+    color: var(--ink-light);
     margin-bottom: .35rem;
-    transition: color .3s;
   }
 
   .form-select, .form-control {
-    border: 1.5px solid var(--input-border);
+    border: 1.5px solid var(--border);
     border-radius: 9px;
     padding: .55rem .85rem;
     font-size: .9rem;
     font-family: 'DM Sans', sans-serif;
-    color: var(--text-primary);
-    background-color: var(--input-bg);
-    transition: border-color .18s, box-shadow .18s, background .2s, color .2s;
+    color: var(--ink);
+    background-color: #fff;
+    transition: border-color .18s, box-shadow .18s;
     height: 44px;
   }
   .form-select:focus, .form-control:focus {
@@ -366,15 +310,7 @@ $js_additional_items  = json_encode($additional_items);
     color: var(--green-600);
     min-width: 140px;
     height: 44px;
-    transition: background .3s, border-color .3s, color .3s;
   }
-
-  :root.dark-mode .unit-cost-chip {
-    background: rgba(58, 135, 105, 0.15);
-    border-color: rgba(122, 211, 197, 0.3);
-    color: #7dd4c5;
-  }
-
   .unit-cost-chip .chip-label {
     font-size: .72rem;
     font-weight: 600;
@@ -393,8 +329,8 @@ $js_additional_items  = json_encode($additional_items);
 
   .table { margin: 0; border-collapse: separate; border-spacing: 0; }
   .table thead th {
-    background: var(--table-header-bg);
-    color: var(--table-header-text);
+    background: var(--ink);
+    color: #fff;
     font-size: .72rem;
     font-weight: 600;
     letter-spacing: .08em;
@@ -402,7 +338,6 @@ $js_additional_items  = json_encode($additional_items);
     padding: .75rem 1rem;
     border: none;
     white-space: nowrap;
-    transition: background .3s, color .3s;
   }
   .table thead th:first-child { border-radius: 10px 0 0 0; }
   .table thead th:last-child  { border-radius: 0 10px 0 0; }
@@ -414,8 +349,6 @@ $js_additional_items  = json_encode($additional_items);
     padding: .6rem .8rem;
     border-bottom: 1px solid var(--border);
     border-left: none; border-right: none; border-top: none;
-    color: var(--text-primary);
-    transition: border-color .3s, color .3s;
   }
 
   .row-num {
@@ -441,19 +374,17 @@ $js_additional_items  = json_encode($additional_items);
     content: '%';
     position: absolute; right: .7rem; top: 50%;
     transform: translateY(-50%);
-    font-size: .82rem; color: var(--text-secondary); pointer-events: none;
-    transition: color .3s;
+    font-size: .82rem; color: var(--ink-light); pointer-events: none;
   }
 
   .computed-cost {
     font-family: 'DM Mono', monospace;
     font-size: .9rem;
     font-weight: 500;
-    color: var(--text-primary);
+    color: var(--ink);
     text-align: right;
     white-space: nowrap;
     min-width: 130px;
-    transition: color .3s;
   }
 
   /* ── Summary Section ── */
@@ -461,11 +392,6 @@ $js_additional_items  = json_encode($additional_items);
     background: var(--ink);
     padding: 1.4rem 1.6rem;
     border-top: 1px solid rgba(255,255,255,.07);
-    transition: background .3s;
-  }
-
-  :root.dark-mode .summary-section {
-    background: #0a0d16;
   }
 
   .summary-grid {
@@ -481,14 +407,7 @@ $js_additional_items  = json_encode($additional_items);
     border: 1px solid rgba(255,255,255,.1);
     border-radius: 10px;
     padding: 1rem 1.2rem;
-    transition: background .3s, border-color .3s;
   }
-
-  :root.dark-mode .summary-item {
-    background: rgba(58, 135, 105, 0.08);
-    border: 1px solid rgba(122, 211, 197, 0.15);
-  }
-
   .summary-item .s-label {
     font-size: .72rem;
     font-weight: 600;
@@ -496,7 +415,6 @@ $js_additional_items  = json_encode($additional_items);
     text-transform: uppercase;
     color: rgba(255,255,255,.5);
     margin-bottom: .35rem;
-    transition: color .3s;
   }
   .summary-item .s-value {
     font-family: 'DM Mono', monospace;
@@ -509,7 +427,6 @@ $js_additional_items  = json_encode($additional_items);
     background: var(--green-500);
     border-color: var(--green-400);
     grid-column: 1 / -1;
-    transition: background .3s, border-color .3s;
   }
   .summary-item.highlight .s-label { color: rgba(255,255,255,.75); }
   .summary-item.highlight .s-value { font-size: 2rem; color: #fff; }
@@ -519,13 +436,7 @@ $js_additional_items  = json_encode($additional_items);
     padding: 1.3rem 1.6rem;
     background: #fafbff;
     border-top: 1px solid var(--border);
-    transition: background .3s;
   }
-
-  :root.dark-mode .assessment-section {
-    background: #151c2a;
-  }
-
   .assess-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -539,14 +450,7 @@ $js_additional_items  = json_encode($additional_items);
     padding: .9rem 1rem;
     background: #fff;
     box-shadow: var(--shadow-sm);
-    transition: background .3s, border-color .3s, box-shadow .3s;
   }
-
-  :root.dark-mode .assess-card {
-    background: #2a3a4d;
-    border-color: #4a5a72;
-  }
-
   .assess-card .ac-label {
     font-size: .7rem;
     font-weight: 600;
@@ -559,39 +463,27 @@ $js_additional_items  = json_encode($additional_items);
     font-family: 'DM Mono', monospace;
     font-size: 1.05rem;
     font-weight: 500;
-    color: var(--text-primary);
-    transition: color .3s;
+    color: var(--ink);
   }
   .assess-card.accent {
     border-color: var(--green-400);
     background: var(--green-50);
-    transition: background .3s, border-color .3s;
   }
-
-  :root.dark-mode .assess-card.accent {
-    background: rgba(58, 135, 105, 0.2);
-    border-color: #7dd4c5;
-  }
-
   .assess-card.accent .ac-value { color: var(--green-600); }
-
-  :root.dark-mode .assess-card.accent .ac-value { color: #7dd4c5; }
 
   /* ── Tooltip on formula ── */
   .formula-hint {
     font-size: .72rem;
-    color: var(--text-secondary);
+    color: var(--ink-light);
     margin-top: .3rem;
     font-family: 'DM Mono', monospace;
     opacity: .7;
-    transition: color .3s;
   }
 
   /* ── Formula Breakdown Box ── */
   .formula-box-section {
     padding: 0 1.6rem 1.6rem;
-    background: var(--card-bg);
-    transition: background .3s;
+    background: #fff;
   }
 
   .formula-yellow-box {
@@ -600,13 +492,6 @@ $js_additional_items  = json_encode($additional_items);
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 2px 12px rgba(249,200,0,.18);
-    transition: background .3s, border-color .3s, box-shadow .3s;
-  }
-
-  :root.dark-mode .formula-yellow-box {
-    background: #2a3a4d;
-    border-color: #d4a574;
-    box-shadow: 0 2px 12px rgba(212,165,116,.1);
   }
 
   .formula-box-header {
@@ -615,12 +500,6 @@ $js_additional_items  = json_encode($additional_items);
     justify-content: space-between;
     background: #f9c800;
     padding: .55rem 1rem;
-    transition: background .3s;
-  }
-
-  :root.dark-mode .formula-box-header {
-    background: #3d4f68;
-    border-bottom: 1px solid #d4a574;
   }
 
   .formula-box-title {
@@ -628,11 +507,6 @@ $js_additional_items  = json_encode($additional_items);
     font-weight: 700;
     color: #5a3e00;
     letter-spacing: .04em;
-    transition: color .3s;
-  }
-
-  :root.dark-mode .formula-box-title {
-    color: #d4a574;
   }
 
   .copy-btn {
@@ -654,13 +528,6 @@ $js_additional_items  = json_encode($additional_items);
   .copy-btn:active { transform: scale(.96); }
   .copy-btn.copied { background: var(--green-600); }
 
-  :root.dark-mode .copy-btn {
-    background: #4a5a72;
-    color: #d4a574;
-  }
-  :root.dark-mode .copy-btn:hover { background: #5a6a82; }
-  :root.dark-mode .copy-btn.copied { background: #3a8769; }
-
   .formula-textarea {
     width: 100%;
     border: none;
@@ -678,31 +545,14 @@ $js_additional_items  = json_encode($additional_items);
     white-space: pre;
     user-select: text;
     -webkit-user-select: text;
-    caret-color: transparent;
-    transition: background .3s, color .3s;
+    caret-color: transparent; /* hide blinking caret — read-like feel */
   }
-
-  :root.dark-mode .formula-textarea {
-    background: #1f2937;
-    color: #d4a574;
-  }
-
   .formula-textarea:focus {
-    caret-color: #9a7a00;
+    caret-color: #9a7a00; /* show caret when actively focused */
   }
-
-  :root.dark-mode .formula-textarea:focus {
-    caret-color: #d4a574;
-  }
-
   .formula-textarea::selection {
     background: #f9c800;
     color: #2d1f00;
-  }
-
-  :root.dark-mode .formula-textarea::selection {
-    background: #4a5a72;
-    color: #d4a574;
   }
 
   .formula-box-footer {
@@ -711,24 +561,12 @@ $js_additional_items  = json_encode($additional_items);
     display: flex;
     align-items: center;
     gap: 1rem;
-    transition: border-color .3s;
   }
-
-  :root.dark-mode .formula-box-footer {
-    border-top-color: #4a5a72;
-  }
-
   .formula-tip {
     font-size: .72rem;
     color: #9a7a00;
     font-style: italic;
-    transition: color .3s;
   }
-
-  :root.dark-mode .formula-tip {
-    color: #d4a574;
-  }
-
   .copy-confirm {
     font-size: .75rem;
     font-weight: 700;
@@ -741,15 +579,7 @@ $js_additional_items  = json_encode($additional_items);
     color: #b0bec5;
     cursor: not-allowed;
     border-color: #e2e8f0;
-    transition: background .3s, color .3s, border-color .3s;
   }
-
-  :root.dark-mode .form-control:disabled {
-    background: #1a1f2a;
-    color: #6b7a8f;
-    border-color: #4a5a72;
-  }
-
   .pct-input-wrap input:disabled + * { opacity: .4; }
 
   /* ── Add / Remove Row controls ── */
@@ -771,7 +601,7 @@ $js_additional_items  = json_encode($additional_items);
     font-weight: 600;
     font-family: 'DM Sans', sans-serif;
     cursor: pointer;
-    transition: background .15s, border-color .15s, transform .1s, color .3s;
+    transition: background .15s, border-color .15s, transform .1s;
   }
   .add-row-btn:hover {
     background: var(--green-50);
@@ -780,16 +610,6 @@ $js_additional_items  = json_encode($additional_items);
   }
   .add-row-btn:active { transform: scale(.97); }
 
-  :root.dark-mode .add-row-btn {
-    border-color: rgba(122, 211, 197, 0.4);
-    color: #7dd4c5;
-  }
-
-  :root.dark-mode .add-row-btn:hover {
-    background: rgba(58, 135, 105, 0.15);
-    border-color: #7dd4c5;
-  }
-
   .add-row-btn-blue {
     border-color: #7aa3d4;
     color: #3d5a80;
@@ -797,16 +617,6 @@ $js_additional_items  = json_encode($additional_items);
   .add-row-btn-blue:hover {
     background: #e8f0fe;
     border-color: #3d5a80;
-  }
-
-  :root.dark-mode .add-row-btn-blue {
-    border-color: rgba(122, 211, 197, 0.4);
-    color: #7dd4c5;
-  }
-
-  :root.dark-mode .add-row-btn-blue:hover {
-    background: rgba(58, 135, 105, 0.15);
-    border-color: #7dd4c5;
   }
 
   .remove-row-btn {
@@ -823,8 +633,6 @@ $js_additional_items  = json_encode($additional_items);
   }
   .remove-row-btn:hover { color: #e74c3c; background: #fff0f0; }
 
-  :root.dark-mode .remove-row-btn:hover { color: #f87171; background: rgba(220, 38, 38, 0.15); }
-
   /* row enter animation */
   @keyframes rowSlideIn {
     from { opacity: 0; transform: translateY(-8px); }
@@ -838,22 +646,15 @@ $js_additional_items  = json_encode($additional_items);
   }
   .addl-table thead th {
     background: #3d5a80;
-    transition: background .3s;
   }
-
-  :root.dark-mode .addl-table thead th {
-    background: #1f2937;
-  }
-
   .addl-computed-cost {
     font-family: 'DM Mono', monospace;
     font-size: .9rem;
     font-weight: 500;
-    color: var(--text-primary);
+    color: var(--ink);
     text-align: right;
     white-space: nowrap;
     min-width: 130px;
-    transition: color .3s;
   }
   .unit-cost-badge {
     display: inline-block;
@@ -867,147 +668,20 @@ $js_additional_items  = json_encode($additional_items);
     font-weight: 500;
     min-width: 70px;
     text-align: center;
-    transition: background .3s, color .3s, border-color .3s;
   }
-
-  :root.dark-mode .unit-cost-badge {
-    background: rgba(58, 135, 105, 0.2);
-    color: #7dd4c5;
-    border-color: rgba(122, 211, 197, 0.3);
-  }
-
   .unit-cost-badge.empty {
     background: #f1f5f9;
     color: #aaa;
     border-color: #e2e8f0;
   }
-
-  :root.dark-mode .unit-cost-badge.empty {
-    background: #1f2937;
-    color: #8a99b0;
-    border-color: #4a5a72;
-  }
-
   /* Summary total additional cost row */
   .summary-item.addl-highlight {
     background: rgba(61,90,128,.15);
     border-color: rgba(61,90,128,.3);
-    transition: background .3s, border-color .3s;
   }
-
-  :root.dark-mode .summary-item.addl-highlight {
-    background: rgba(122, 211, 197, 0.1);
-    border-color: rgba(122, 211, 197, 0.2);
-  }
-
   .summary-item.addl-highlight .s-label { color: rgba(255,255,255,.6); }
   .summary-item.addl-highlight .s-value { color: #aed6f1; }
 
-  :root.dark-mode .summary-item.addl-highlight .s-value { color: #7dd4c5; }
-
-  /* ── Background Game Canvas ── */
-  #bgCanvas {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none;
-  }
-  #bgCanvas.interactive {
-    pointer-events: auto;
-    cursor: crosshair;
-  }
-
-  /* ── Dark Mode Toggle Button ── */
-  #darkModeToggle {
-    position: fixed;
-    bottom: 1.2rem;
-    right: 5.8rem;
-    z-index: 100;
-    background: var(--ink);
-    color: #fff;
-    border: none;
-    border-radius: 50px;
-    padding: .5rem 1rem .5rem .75rem;
-    font-family: 'DM Sans', sans-serif;
-    font-size: .78rem;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: .4rem;
-    box-shadow: 0 4px 16px rgba(0,0,0,.2);
-    transition: background .2s, transform .15s;
-    user-select: none;
-  }
-  #darkModeToggle:hover { background: var(--green-600); transform: translateY(-2px); }
-  #darkModeToggle .dm-icon { font-size: 1rem; }
-
-  /* ── Game toggle button ── */
-  #gameToggle {
-    position: fixed;
-    bottom: 1.2rem;
-    right: 1.2rem;
-    z-index: 100;
-    background: var(--ink);
-    color: #fff;
-    border: none;
-    border-radius: 50px;
-    padding: .5rem 1rem .5rem .75rem;
-    font-family: 'DM Sans', sans-serif;
-    font-size: .78rem;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: .4rem;
-    box-shadow: 0 4px 16px rgba(0,0,0,.2);
-    transition: background .2s, transform .15s;
-    user-select: none;
-  }
-  #gameToggle:hover { background: var(--green-600); transform: translateY(-2px); }
-  #gameToggle .gt-icon { font-size: 1rem; }
-
-  /* ── Score HUD ── */
-  #gameHUD {
-    position: fixed;
-    bottom: 1.2rem;
-    left: 1.2rem;
-    z-index: 100;
-    background: rgba(26,35,50,.85);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(76,175,125,.3);
-    border-radius: 10px;
-    padding: .5rem .9rem;
-    font-family: 'DM Mono', monospace;
-    font-size: .78rem;
-    color: #fff;
-    display: none;
-    gap: 1.2rem;
-    align-items: center;
-  }
-  #gameHUD.visible { display: flex; }
-  #gameHUD .hud-item { display: flex; flex-direction: column; align-items: center; }
-  #gameHUD .hud-label { font-size: .6rem; opacity: .6; text-transform: uppercase; letter-spacing: .07em; }
-  #gameHUD .hud-val { font-size: 1rem; font-weight: 500; color: #4caf7d; }
-
-  /* ── Floating score popup ── */
-  .score-pop {
-    position: fixed;
-    font-family: 'DM Mono', monospace;
-    font-size: .9rem;
-    font-weight: 700;
-    color: #2e9e64;
-    pointer-events: none;
-    z-index: 99;
-    animation: scorePop .8s ease-out forwards;
-    text-shadow: 0 1px 4px rgba(0,0,0,.2);
-  }
-  @keyframes scorePop {
-    0%   { opacity: 1; transform: translateY(0) scale(1); }
-    100% { opacity: 0; transform: translateY(-55px) scale(1.3); }
-  }
   @media (max-width: 768px) {
     .input-section .row > div { margin-bottom: .5rem; }
     .components-table-wrap { padding: 0 .8rem 1rem; }
@@ -1016,32 +690,6 @@ $js_additional_items  = json_encode($additional_items);
 </style>
 </head>
 <body>
-
-<!-- ── Background Game ── -->
-<canvas id="bgCanvas"></canvas>
-
-<div id="gameHUD">
-  <div class="hud-item">
-    <span class="hud-label">Demolished</span>
-    <span class="hud-val" id="hudScore">0</span>
-  </div>
-  <div class="hud-item">
-    <span class="hud-label">Combo</span>
-    <span class="hud-val" id="hudCombo">x1</span>
-  </div>
-  <div class="hud-item">
-    <span class="hud-label">Level</span>
-    <span class="hud-val" id="hudLevel">1</span>
-  </div>
-</div>
-
-<button id="darkModeToggle" onclick="toggleDarkMode()">
-  <span class="dm-icon">🌙</span> Dark Mode
-</button>
-
-<button id="gameToggle" onclick="toggleGame()">
-  <span class="gt-icon">🏗️</span> Play Background Game
-</button>
 
 <div class="page-wrapper">
 
@@ -1285,55 +933,6 @@ $js_additional_items  = json_encode($additional_items);
 </div><!-- /.page-wrapper -->
 
 <script>
-// ─────────────────────────────────────────────────────────────
-// DARK MODE TOGGLE
-// ─────────────────────────────────────────────────────────────
-function toggleDarkMode() {
-  const html = document.documentElement;
-  const btn = document.getElementById('darkModeToggle');
-  
-  html.classList.toggle('dark-mode');
-  const isDark = html.classList.contains('dark-mode');
-  
-  // Save preference to localStorage
-  localStorage.setItem('darkMode', isDark);
-  
-  // Update button text and icon
-  if (isDark) {
-    btn.innerHTML = '<span class="dm-icon">☀️</span> Light Mode';
-  } else {
-    btn.innerHTML = '<span class="dm-icon">🌙</span> Dark Mode';
-  }
-}
-
-// Check for saved dark mode preference or system preference on page load
-function initDarkMode() {
-  const savedDarkMode = localStorage.getItem('darkMode');
-  const prefersLight = localStorage.getItem('darkMode') === 'false';
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  
-  let shouldBeDark = false;
-  
-  if (savedDarkMode !== null) {
-    shouldBeDark = savedDarkMode === 'true';
-  } else if (prefersDark) {
-    shouldBeDark = true;
-  }
-  
-  if (shouldBeDark) {
-    document.documentElement.classList.add('dark-mode');
-    const btn = document.getElementById('darkModeToggle');
-    if (btn) btn.innerHTML = '<span class="dm-icon">☀️</span> Light Mode';
-  }
-}
-
-// Initialize dark mode when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initDarkMode);
-} else {
-  initDarkMode();
-}
-
 // ─────────────────────────────────────────────────────────────
 // PHP → JS data injection
 // ─────────────────────────────────────────────────────────────
@@ -1755,305 +1354,8 @@ function copyFormula() {
   });
 }
 
-// ═══════════════════════════════════════════════════════════════
-// BACKGROUND MINI-GAME — Falling Bricks Demolition
-// Click bricks to demolish them and earn points!
-// ═══════════════════════════════════════════════════════════════
-(function() {
-  const canvas  = document.getElementById('bgCanvas');
-  const ctx     = canvas.getContext('2d');
-  let gameActive = false;
-  let animId    = null;
-  let score     = 0;
-  let combo     = 1;
-  let comboTimer = null;
-  let level     = 1;
-  let frameCount = 0;
-  let bricks    = [];
-  let particles = [];
-  let cranes    = [];
-
-  // Brick colours — construction themed
-  const BRICK_COLOURS = [
-    '#c0392b','#e74c3c','#e67e22','#d35400',
-    '#f39c12','#8e6b3e','#a0522d','#795548',
-    '#607d8b','#546e7a','#4caf7d','#2e7d52',
-  ];
-
-  const BRICK_W = 52, BRICK_H = 24;
-
-  function resize() {
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-
-  // ── Brick object ──────────────────────────────────────────
-  function makeBrick() {
-    const col   = BRICK_COLOURS[Math.floor(Math.random() * BRICK_COLOURS.length)];
-    const speed = 0.6 + Math.random() * 0.8 + level * 0.12;
-    return {
-      x:      Math.random() * (canvas.width  - BRICK_W),
-      y:      -BRICK_H - Math.random() * 300,
-      w:      BRICK_W + Math.floor(Math.random() * 24),
-      h:      BRICK_H,
-      colour: col,
-      speed,
-      wobble: (Math.random() - 0.5) * 0.4,
-      hp:     1,
-      shake:  0,
-      opacity: 1,
-      dead:   false,
-    };
-  }
-
-  // ── Particle burst ────────────────────────────────────────
-  function burst(x, y, colour, count = 10) {
-    for (let i = 0; i < count; i++) {
-      const angle = (Math.PI * 2 / count) * i + Math.random() * 0.5;
-      const speed = 2 + Math.random() * 4;
-      particles.push({
-        x, y,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed - 2,
-        r:  3 + Math.random() * 4,
-        colour,
-        life: 1,
-        decay: 0.02 + Math.random() * 0.03,
-      });
-    }
-  }
-
-  // ── Crane (decorative, slowly moves) ─────────────────────
-  function makeCrane(x) {
-    return { x, y: 0, speed: 0.15 + Math.random() * 0.1, dir: 1 };
-  }
-
-  // ── Draw a single brick ───────────────────────────────────
-  function drawBrick(b) {
-    ctx.save();
-    ctx.globalAlpha = b.opacity;
-    const sx = b.shake ? (Math.random() - 0.5) * b.shake : 0;
-
-    // Shadow
-    ctx.shadowColor = 'rgba(0,0,0,0.18)';
-    ctx.shadowBlur  = 6;
-    ctx.shadowOffsetX = 2; ctx.shadowOffsetY = 3;
-
-    // Body
-    ctx.fillStyle = b.colour;
-    ctx.beginPath();
-    ctx.roundRect(b.x + sx, b.y, b.w, b.h, 3);
-    ctx.fill();
-
-    // Mortar lines (texture)
-    ctx.shadowBlur = 0;
-    ctx.strokeStyle = 'rgba(0,0,0,0.15)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(b.x + sx + b.w / 2, b.y);
-    ctx.lineTo(b.x + sx + b.w / 2, b.y + b.h);
-    ctx.stroke();
-
-    // Highlight
-    ctx.fillStyle = 'rgba(255,255,255,0.12)';
-    ctx.beginPath();
-    ctx.roundRect(b.x + sx + 2, b.y + 2, b.w - 4, b.h / 2 - 2, 2);
-    ctx.fill();
-
-    ctx.restore();
-  }
-
-  // ── Draw a crane ──────────────────────────────────────────
-  function drawCrane(c) {
-    const x = c.x, h = canvas.height * 0.35;
-    ctx.save();
-    ctx.globalAlpha = 0.07;
-    ctx.strokeStyle = '#1a2332';
-    ctx.lineWidth = 3;
-    // Mast
-    ctx.beginPath();
-    ctx.moveTo(x, canvas.height);
-    ctx.lineTo(x, canvas.height - h);
-    ctx.stroke();
-    // Jib (horizontal arm)
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(x - 20, canvas.height - h);
-    ctx.lineTo(x + 120, canvas.height - h);
-    ctx.stroke();
-    // Cable
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(x + 90, canvas.height - h);
-    ctx.lineTo(x + 90, canvas.height - h + 60);
-    ctx.stroke();
-    // Hook ball
-    ctx.beginPath();
-    ctx.arc(x + 90, canvas.height - h + 65, 5, 0, Math.PI * 2);
-    ctx.fillStyle = '#1a2332';
-    ctx.fill();
-    ctx.restore();
-  }
-
-  // ── Score popup ───────────────────────────────────────────
-  function showScorePop(x, y, text) {
-    const el = document.createElement('div');
-    el.className = 'score-pop';
-    el.textContent = text;
-    el.style.left = x + 'px';
-    el.style.top  = y + 'px';
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 850);
-  }
-
-  // ── Hit detection ─────────────────────────────────────────
-  function hitBrick(mx, my) {
-    for (let i = bricks.length - 1; i >= 0; i--) {
-      const b = bricks[i];
-      if (b.dead) continue;
-      if (mx >= b.x && mx <= b.x + b.w && my >= b.y && my <= b.y + b.h) {
-        b.dead   = true;
-        b.shake  = 0;
-        score   += combo;
-        // Combo
-        clearTimeout(comboTimer);
-        combo++;
-        comboTimer = setTimeout(() => { combo = 1; updateHUD(); }, 1200);
-
-        burst(b.x + b.w / 2, b.y + b.h / 2, b.colour, 12 + combo);
-        showScorePop(
-          Math.min(mx, window.innerWidth - 80),
-          my - 10,
-          combo > 1 ? `+${combo} COMBO!` : `+1`
-        );
-        updateHUD();
-        return true;
-      }
-    }
-    return false;
-  }
-
-  function updateHUD() {
-    document.getElementById('hudScore').textContent = score;
-    document.getElementById('hudCombo').textContent = 'x' + combo;
-    level = 1 + Math.floor(score / 20);
-    document.getElementById('hudLevel').textContent = level;
-  }
-
-  // ── Main game loop ────────────────────────────────────────
-  function loop() {
-    if (!gameActive) return;
-    animId = requestAnimationFrame(loop);
-    frameCount++;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Spawn bricks
-    const spawnRate = Math.max(55 - level * 3, 18);
-    if (frameCount % spawnRate === 0) {
-      bricks.push(makeBrick());
-    }
-
-    // Update & draw cranes
-    cranes.forEach(c => {
-      c.x += c.speed * c.dir;
-      if (c.x > canvas.width + 150 || c.x < -150) c.dir *= -1;
-      drawCrane(c);
-    });
-
-    // Update & draw bricks
-    bricks = bricks.filter(b => {
-      if (b.dead) {
-        b.opacity -= 0.06;
-        b.y       -= 1.5;
-        return b.opacity > 0;
-      }
-      b.y    += b.speed;
-      b.x    += b.wobble;
-      if (b.shake > 0) b.shake -= 0.3;
-      // Bounce off walls
-      if (b.x < 0)                    { b.x = 0; b.wobble *= -1; }
-      if (b.x + b.w > canvas.width)  { b.x = canvas.width - b.w; b.wobble *= -1; }
-      drawBrick(b);
-      return b.y < canvas.height + BRICK_H;
-    });
-
-    // Update & draw particles
-    particles = particles.filter(p => {
-      p.x    += p.vx;
-      p.y    += p.vy;
-      p.vy   += 0.18; // gravity
-      p.life -= p.decay;
-      if (p.life <= 0) return false;
-      ctx.save();
-      ctx.globalAlpha = p.life;
-      ctx.fillStyle   = p.colour;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-      return true;
-    });
-  }
-
-  // ── Toggle game ───────────────────────────────────────────
-  window.toggleGame = function() {
-    gameActive = !gameActive;
-    const btn = document.getElementById('gameToggle');
-    const hud = document.getElementById('gameHUD');
-
-    if (gameActive) {
-      resize();
-      if (!cranes.length) {
-        cranes = [
-          makeCrane(canvas.width * 0.15),
-          makeCrane(canvas.width * 0.75),
-        ];
-      }
-      canvas.classList.add('interactive');
-      hud.classList.add('visible');
-      btn.innerHTML = '<span class="gt-icon">⛔</span> Stop Game';
-      btn.style.background = '#c0392b';
-      loop();
-    } else {
-      canvas.classList.remove('interactive');
-      hud.classList.remove('visible');
-      btn.innerHTML = '<span class="gt-icon">🏗️</span> Play Background Game';
-      btn.style.background = '';
-      cancelAnimationFrame(animId);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      bricks = []; particles = [];
-    }
-  };
-
-  // ── Click handler ─────────────────────────────────────────
-  canvas.addEventListener('click', e => {
-    if (!gameActive) return;
-    const rect = canvas.getBoundingClientRect();
-    hitBrick(e.clientX - rect.left, e.clientY - rect.top);
-  });
-
-  // ── Touch support ─────────────────────────────────────────
-  canvas.addEventListener('touchstart', e => {
-    if (!gameActive) return;
-    e.preventDefault();
-    const rect  = canvas.getBoundingClientRect();
-    const touch = e.touches[0];
-    hitBrick(touch.clientX - rect.left, touch.clientY - rect.top);
-  }, { passive: false });
-
-  window.addEventListener('resize', () => {
-    resize();
-    cranes = [
-      makeCrane(canvas.width * 0.15),
-      makeCrane(canvas.width * 0.75),
-    ];
-  });
-
-  resize();
-})();
 // ─────────────────────────────────────────────────────────────
-// Init — seed 1 row for each table (reduced from 5), then compute
+// Init — seed 5 rows for each table, then compute
 // ─────────────────────────────────────────────────────────────
 document.querySelectorAll('input[type=number]').forEach(el => {
   el.addEventListener('blur', () => {
@@ -2064,16 +1366,6 @@ document.querySelectorAll('input[type=number]').forEach(el => {
 onConstructionChange();
 for (let s = 0; s < 1; s++) { addCompRow(); }
 for (let s = 0; s < 1; s++) { addAddlRow(); }
-</script>
-    
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-H037GPSG7X"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-H037GPSG7X');
 </script>
 </body>
 </html>
