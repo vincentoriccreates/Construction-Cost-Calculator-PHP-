@@ -2,6 +2,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // DATA TABLES — all hardcoded from Excel reference sheet
 // ─────────────────────────────────────────────────────────────────────────────
+    
 
 $structural_types = ['Residential', 'Agricultural', 'Commercial/Industrial', 'Government'];
 
@@ -139,8 +140,8 @@ $additional_items = [
     'Walling - Fancy Tiles'                 => 450.00,
     'Walling - Synthetic Rubble'            => 400.00,
     'Walling - Bricks'                      => 400.00,
-    'Swimming Pool -V(A)'                      => 7570.00,
-    'Swimming Pool -V(B)'                      => 6890.00,
+    'Swimming Pool - V(A)'                   => 7570.00,
+    'Swimming Pool - V(B)'                   => 6890.00,
 ];
 
 // Pass PHP data to JavaScript
@@ -163,23 +164,25 @@ $js_additional_items  = json_encode($additional_items);
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Construction Cost Calculator</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#x1F3D7;</text></svg>">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏗️</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
   :root {
-    --green-50:  #f0faf4;
-    --green-100: #dcf5e6;
-    --green-200: #b5eccc;
-    --green-400: #4caf7d;
-    --green-500: #2e9e64;
-    --green-600: #1e7d4e;
+    --primary-50:  #f0f6fb;
+    --primary-100: #d5deef;
+    --primary-200: #b1c9e6;
+    --primary-400: #8aaee0;
+    --primary-500: #628ecb;
+    --primary-600: #395886;
     --ink:       #1a2332;
     --ink-light: #4a5568;
     --border:    #e2e8f0;
-    --shadow-sm: 0 2px 8px rgba(30,50,80,.06);
-    --shadow-md: 0 6px 24px rgba(30,50,80,.10);
-    --shadow-lg: 0 16px 48px rgba(30,50,80,.14);
+    --shadow-sm: 0 2px 8px rgba(57,88,134,.08);
+    --shadow-md: 0 6px 24px rgba(57,88,134,.12);
+    --shadow-lg: 0 16px 48px rgba(57,88,134,.16);
     --radius:    14px;
   }
 
@@ -187,20 +190,20 @@ $js_additional_items  = json_encode($additional_items);
 
   body {
     font-family: 'DM Sans', sans-serif;
-    background: url('https://scontent-mnl3-2.xx.fbcdn.net/v/t39.30808-6/580567884_1272694124886948_8175417312678070392_n.jpg?_nc_cat=107&ccb=1-7&_nc_sid=b895b5&_nc_ohc=C81KWtROz8oQ7kNvwEW_WkW&_nc_oc=AdoxSfEL5683OiSIEqLjE4QVwjENZ_NM1UiREkfNYiw1weIw_Cq1gBGyrpyM-gI6yU8&_nc_zt=23&_nc_ht=scontent-mnl3-2.xx&_nc_gid=v1q8clgt6ACG2FfMlsF7eQ&_nc_ss=7b289&oh=00_Af3YN5QKxmBDg392yPP471bCb8AMGOpkcQO1kYPdEderVQ&oe=69F5E422') center center / cover fixed;
+    background: linear-gradient(135deg, #f0f6fb 0%, #e8f1f8 50%, #d5deef 100%);
     color: var(--ink);
     min-height: 100vh;
     padding: 2rem 1rem;
   }
 
-  /* Soft white wash over the background so it doesn't compete with the UI */
+  /* Soft overlay for depth */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background: rgba(255, 255, 255, 0.72);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(1px);
+    -webkit-backdrop-filter: blur(1px);
     pointer-events: none;
     z-index: 0;
   }
@@ -214,8 +217,8 @@ $js_additional_items  = json_encode($additional_items);
   }
   .page-header .badge-label {
     display: inline-block;
-    background: var(--green-100);
-    color: var(--green-600);
+    background: var(--primary-100);
+    color: var(--primary-600);
     font-size: .72rem;
     font-weight: 600;
     letter-spacing: .1em;
@@ -228,7 +231,7 @@ $js_additional_items  = json_encode($additional_items);
     font-family: 'Playfair Display', serif;
     font-size: clamp(1.7rem, 4vw, 2.4rem);
     font-weight: 600;
-    color: var(--ink);
+    color: var(--primary-600);
     margin: 0 0 .4rem;
     line-height: 1.15;
   }
@@ -253,13 +256,13 @@ $js_additional_items  = json_encode($additional_items);
     align-items: center;
     gap: .6rem;
     padding: 1.1rem 1.6rem;
-    background: var(--green-50);
-    border-bottom: 1px solid var(--green-200);
+    background: var(--primary-50);
+    border-bottom: 1px solid var(--primary-200);
   }
   .section-header .dot {
     width: 8px; height: 8px;
     border-radius: 50%;
-    background: var(--green-500);
+    background: var(--primary-500);
     flex-shrink: 0;
   }
   .section-header span {
@@ -267,13 +270,13 @@ $js_additional_items  = json_encode($additional_items);
     font-weight: 600;
     letter-spacing: .09em;
     text-transform: uppercase;
-    color: var(--green-600);
+    color: var(--primary-600);
   }
 
   /* ── Input Section ── */
   .input-section {
     padding: 1.5rem 1.6rem 1.3rem;
-    background: linear-gradient(135deg, var(--green-50) 0%, #f8fffe 100%);
+    background: linear-gradient(135deg, var(--primary-50) 0%, #f8fbff 100%);
     border-bottom: 1px solid var(--border);
   }
   .input-section .row { gap: .6rem 0; }
@@ -299,8 +302,8 @@ $js_additional_items  = json_encode($additional_items);
     height: 44px;
   }
   .form-select:focus, .form-control:focus {
-    border-color: var(--green-400);
-    box-shadow: 0 0 0 3px rgba(76,175,125,.18);
+    border-color: var(--primary-400);
+    box-shadow: 0 0 0 3px rgba(138,174,224,.18);
     outline: none;
   }
 
@@ -309,14 +312,14 @@ $js_additional_items  = json_encode($additional_items);
     display: inline-flex;
     align-items: center;
     gap: .4rem;
-    background: var(--green-100);
-    border: 1px solid var(--green-200);
+    background: var(--primary-100);
+    border: 1px solid var(--primary-200);
     border-radius: 8px;
     padding: .45rem .85rem;
     font-family: 'DM Mono', monospace;
     font-size: .9rem;
     font-weight: 500;
-    color: var(--green-600);
+    color: var(--primary-600);
     min-width: 140px;
     height: 44px;
   }
@@ -325,7 +328,7 @@ $js_additional_items  = json_encode($additional_items);
     font-weight: 600;
     letter-spacing: .05em;
     text-transform: uppercase;
-    color: var(--green-500);
+    color: var(--primary-500);
     opacity: .8;
   }
 
@@ -338,7 +341,7 @@ $js_additional_items  = json_encode($additional_items);
 
   .table { margin: 0; border-collapse: separate; border-spacing: 0; }
   .table thead th {
-    background: var(--ink);
+    background: var(--primary-600);
     color: #fff;
     font-size: .72rem;
     font-weight: 600;
@@ -352,7 +355,7 @@ $js_additional_items  = json_encode($additional_items);
   .table thead th:last-child  { border-radius: 0 10px 0 0; }
 
   .table tbody tr { transition: background .15s; }
-  .table tbody tr:hover { background: var(--green-50); }
+  .table tbody tr:hover { background: var(--primary-50); }
   .table tbody td {
     vertical-align: middle;
     padding: .6rem .8rem;
@@ -362,8 +365,8 @@ $js_additional_items  = json_encode($additional_items);
 
   .row-num {
     width: 28px; height: 28px;
-    background: var(--green-100);
-    color: var(--green-600);
+    background: var(--primary-100);
+    color: var(--primary-600);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-size: .75rem; font-weight: 700;
@@ -398,9 +401,9 @@ $js_additional_items  = json_encode($additional_items);
 
   /* ── Summary Section ── */
   .summary-section {
-    background: var(--ink);
+    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-500) 100%);
     padding: 1.4rem 1.6rem;
-    border-top: 1px solid rgba(255,255,255,.07);
+    border-top: 1px solid rgba(255,255,255,.1);
   }
 
   .summary-grid {
@@ -412,8 +415,8 @@ $js_additional_items  = json_encode($additional_items);
   @media (max-width: 600px) { .summary-grid { grid-template-columns: 1fr; } }
 
   .summary-item {
-    background: rgba(255,255,255,.06);
-    border: 1px solid rgba(255,255,255,.1);
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.12);
     border-radius: 10px;
     padding: 1rem 1.2rem;
   }
@@ -422,7 +425,7 @@ $js_additional_items  = json_encode($additional_items);
     font-weight: 600;
     letter-spacing: .1em;
     text-transform: uppercase;
-    color: rgba(255,255,255,.5);
+    color: rgba(255,255,255,.55);
     margin-bottom: .35rem;
   }
   .summary-item .s-value {
@@ -433,11 +436,11 @@ $js_additional_items  = json_encode($additional_items);
     line-height: 1;
   }
   .summary-item.highlight {
-    background: var(--green-500);
-    border-color: var(--green-400);
+    background: rgba(255,255,255,.12);
+    border-color: rgba(255,255,255,.2);
     grid-column: 1 / -1;
   }
-  .summary-item.highlight .s-label { color: rgba(255,255,255,.75); }
+  .summary-item.highlight .s-label { color: rgba(255,255,255,.7); }
   .summary-item.highlight .s-value { font-size: 2rem; color: #fff; }
 
   /* ── Assessment Section ── */
@@ -475,10 +478,10 @@ $js_additional_items  = json_encode($additional_items);
     color: var(--ink);
   }
   .assess-card.accent {
-    border-color: var(--green-400);
-    background: var(--green-50);
+    border-color: var(--primary-400);
+    background: var(--primary-50);
   }
-  .assess-card.accent .ac-value { color: var(--green-600); }
+  .assess-card.accent .ac-value { color: var(--primary-600); }
 
   /* ── Tooltip on formula ── */
   .formula-hint {
@@ -535,7 +538,7 @@ $js_additional_items  = json_encode($additional_items);
   }
   .copy-btn:hover  { background: #3d2900; }
   .copy-btn:active { transform: scale(.96); }
-  .copy-btn.copied { background: var(--green-600); }
+  .copy-btn.copied { background: var(--primary-600); }
 
   .formula-textarea {
     width: 100%;
@@ -554,10 +557,10 @@ $js_additional_items  = json_encode($additional_items);
     white-space: pre;
     user-select: text;
     -webkit-user-select: text;
-    caret-color: transparent; /* hide blinking caret — read-like feel */
+    caret-color: transparent;
   }
   .formula-textarea:focus {
-    caret-color: #9a7a00; /* show caret when actively focused */
+    caret-color: #9a7a00;
   }
   .formula-textarea::selection {
     background: #f9c800;
@@ -579,7 +582,7 @@ $js_additional_items  = json_encode($additional_items);
   .copy-confirm {
     font-size: .75rem;
     font-weight: 700;
-    color: var(--green-600);
+    color: var(--primary-600);
   }
 
   /* ── Disabled input styling ── */
@@ -602,8 +605,8 @@ $js_additional_items  = json_encode($additional_items);
     align-items: center;
     gap: .4rem;
     background: transparent;
-    border: 1.5px dashed var(--green-400);
-    color: var(--green-600);
+    border: 1.5px dashed var(--primary-400);
+    color: var(--primary-600);
     border-radius: 8px;
     padding: .42rem 1rem;
     font-size: .8rem;
@@ -613,19 +616,19 @@ $js_additional_items  = json_encode($additional_items);
     transition: background .15s, border-color .15s, transform .1s;
   }
   .add-row-btn:hover {
-    background: var(--green-50);
-    border-color: var(--green-500);
+    background: var(--primary-50);
+    border-color: var(--primary-500);
     transform: translateY(-1px);
   }
   .add-row-btn:active { transform: scale(.97); }
 
   .add-row-btn-blue {
-    border-color: #7aa3d4;
-    color: #3d5a80;
+    border-color: var(--primary-400);
+    color: var(--primary-600);
   }
   .add-row-btn-blue:hover {
-    background: #e8f0fe;
-    border-color: #3d5a80;
+    background: var(--primary-50);
+    border-color: var(--primary-500);
   }
 
   .remove-row-btn {
@@ -654,7 +657,7 @@ $js_additional_items  = json_encode($additional_items);
     padding: 0 1.6rem 1.4rem;
   }
   .addl-table thead th {
-    background: #3d5a80;
+    background: var(--primary-500);
   }
   .addl-computed-cost {
     font-family: 'DM Mono', monospace;
@@ -685,11 +688,11 @@ $js_additional_items  = json_encode($additional_items);
   }
   /* Summary total additional cost row */
   .summary-item.addl-highlight {
-    background: rgba(61,90,128,.15);
-    border-color: rgba(61,90,128,.3);
+    background: rgba(98,142,203,.15);
+    border-color: rgba(98,142,203,.3);
   }
-  .summary-item.addl-highlight .s-label { color: rgba(255,255,255,.6); }
-  .summary-item.addl-highlight .s-value { color: #aed6f1; }
+  .summary-item.addl-highlight .s-label { color: rgba(255,255,255,.65); }
+  .summary-item.addl-highlight .s-value { color: #b1c9e6; }
 
   @media (max-width: 768px) {
     .input-section .row > div { margin-bottom: .5rem; }
@@ -782,8 +785,8 @@ $js_additional_items  = json_encode($additional_items);
           <div class="formula-hint" id="mainFormula">46 × 6,200 = ₱285,200.00</div>
         </div>
         <div class="col-md-8">
-          <div style="background:var(--green-50);border:1px solid var(--green-200);border-radius:9px;padding:.6rem 1rem;">
-            <small style="font-size:.75rem;color:var(--green-600);font-weight:600;">💡 FORMULA: EST COST = Area × Unit Cost &nbsp;|&nbsp; Component Cost = Area × Unit Cost × %</small>
+          <div style="background:var(--primary-50);border:1px solid var(--primary-200);border-radius:9px;padding:.6rem 1rem;">
+            <small style="font-size:.75rem;color:var(--primary-600);font-weight:600;">💡 FORMULA: EST COST = Area × Unit Cost &nbsp;|&nbsp; Component Cost = Area × Unit Cost × %</small>
           </div>
         </div>
       </div>
@@ -825,8 +828,8 @@ $js_additional_items  = json_encode($additional_items);
 
     <!-- ②-B Additional Items -->
     <div class="section-header">
-      <span class="dot" style="background:#3d5a80"></span>
-      <span style="color:#3d5a80;">Cost of Additional Items</span>
+      <span class="dot" style="background:var(--primary-500)"></span>
+      <span style="color:var(--primary-600);">Cost of Additional Items</span>
     </div>
 
     <div class="addl-section mt-3">
@@ -1088,7 +1091,7 @@ function addAddlRow() {
   tr.id        = `addl_tr_${n}`;
   tr.className = 'row-new';
   tr.innerHTML = `
-    <td><div class="row-num" style="background:#e8f0fe;color:#3d5a80">${tbody.rows.length + 1}</div></td>
+    <td><div class="row-num" style="background:var(--primary-100);color:var(--primary-600)">${tbody.rows.length + 1}</div></td>
     <td>
       <select class="form-select addl-select" data-row="${n}" onchange="onAddlChange(${n})">
         ${buildAddlOptions()}
